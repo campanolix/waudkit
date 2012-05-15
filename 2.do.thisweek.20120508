@@ -1,0 +1,5 @@
+	1.	Finish draft of testing and development in ProbeKit.
+	2.	Drive some development of primary script off ProbeKit, and vice versa.
+	3.	Also create FlatData class for primary script.
+	4.	Also create Configurations class for primary script.
+	5.	Put together tests for run of primary script.

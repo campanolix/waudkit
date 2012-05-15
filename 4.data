@@ -1,0 +1,4 @@
+	1.  	Maintain a constant range of fully available data, preferably 4 hours.
+	2.		Make error nodes just symbolic links.
+	3. 		Look at loading errors upon assignment into history.
+	4.		

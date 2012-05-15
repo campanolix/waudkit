@@ -1,0 +1,45 @@
+Test Sections
+
+	I.	Probes
+	
+		1.  It should be able to execute an interactive single call probe and get reasonable results.
+		2.  It should be able to execute an interactive multi-step probe with no dependencies.
+		3.  It should be able to execute an interactive multi-step probe with dependencies.
+		4.  It should be able to execute a list of heterogeneous probes in a set of parallel threads.
+		5.  Execution of 4 should be fast.
+
+	II.	Data
+
+		1.	It should save Probe Data to an arbitrary buffer point for assessment.
+		2.	It should be able to save data for a list of probe sets for assessment.
+		3.	It should be able to trim and otherwise clean up old data.
+		4.	Data should be saved efficiently for administrative and auditing purposes.
+		5.	Test that all the probe files utilized are unique across a given probe set list execution.
+
+	III.  Cfg
+
+		1.	It should be able to load configurations efficiently.
+		2.	It should be able to Edit configurations from a GUI. (cucumber)
+
+	IV.	Tracking
+
+		1.  You should be able to see a tracking report.
+		2.	You should be able to see full data for 4 hours from the tracking report.
+		3.	You should be able to see error data for 168 hours from the extension of the 4 hour report.
+		4.	You should be able to see a Latest ProbeSet report.
+		5.	You should be able to see an Email Fail Status report.
+		6.	You should be able to see a configuration report.
+		7.	You should be able to see a simple configuration checksum for each probe.
+		8.	Colors should be generated from Labels.
+		9.	Colors should generate to pastels only as much as possible and not be within 10 points of red, yellow, green or blue.
+		10.	Hard Blue is used for data in progress.
+		11.	Red is for failing data or states.
+		12.	yellow is for warning.
+		13.	Green is for passing data or states.
+		14.	You should be able to see full help.
+		15.	You should be able to link to an apache directory of the data.
+		16.	You should be able to link to the general history report.
+
+	V.	History
+
+		

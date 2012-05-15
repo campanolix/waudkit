@@ -1,0 +1,33 @@
+	0.	Put new project in git, with a new project name:  WaudKit, comprising the following with supporting tests:
+		i.		ProbeKit
+		ii.		CfgKit (Complement to ProbeKit including web edit GUIs, and probe creation and ad hoc execution tools)
+		iii.	Spot 
+		iv.		Testory (a test history mechanism for iii)
+	1.	Start draft of Configuration module:  Make a simple version work.
+---By end of tonight
+	2.	Put together some compound dependent sequnce tests, and comply with these.
+	3.	Add configurations for 2.
+---By end of next week
+	4.	Finish ProbeKitTest.i.rb ProbeSequence tests, and then comply with these.
+---By end of month
+	5.	Put together some tests for QA that are useful for daily production and int reassurances.
+	6.	Upon achieving some production use of cucumber tests, create any possible derivative tests.
+	7.	Create a basic int Spot Monitor version that has the following attributes in implementation order:
+		i.		Probes Pixies int every 5 minutes
+		ii.		Probes rds resources every 5 minutes
+		iii.	Probes playback resources every 5 minutes
+		iv.		Probes login/logout every 5 minutes
+		v.		Probes playback ajax functions every 5 minutes
+		vi.		Probes radio playback ajax functions every 5 minutes
+		vii.	Probes profile ajax functions every 5 minutes
+		viii.	Probes int omniture items every 5 minutes
+		ix.		Probes int UDS items every 5 minutes.
+		x.		Probes int search items every 5 minutes.
+		xi.		Probes int UPS every 5 minutes.
+		xii.	Set up HTTPS only for single password point for tracking.
+		xiii.	Get CfgGUI together for management with all fixins:
+			a.		Ad hoc proposal generator
+			b.		Proposal review mechanism
+			c.		Full https security
+			d.		Full integration testing
+---By End of June

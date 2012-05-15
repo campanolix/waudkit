@@ -1,0 +1,20 @@
+	1.	Write scripts to check proper workings
+		
+	2.	Write Configuration Kit
+		i.		Put together existing configurations from SVN Spot.
+		ii.		Merge in updates from production.
+		iii.	Add features to cover new multi-probe Probe Sets.
+		iv.		Create Sets which cover these as a set.
+	3.	Finish full HTTP coverage toolkit.
+		i.	Test existing probes piecemeal, and make these
+	4.	Write probe script.
+	5.	Write Flat Data Kit
+		i.		Come up with updated flat tree.
+		ii.		Put Config into RAM on deployment, with copy in home tree.
+	6.	Write Tracking Tool.
+		i.		Use color imputation from labels.
+	7.	Write Configuration GUI.
+		i.		Create Config Table for use with History so that Config Kit will be a Rails system
+		ii.		Make updates deploy to flat areas.
+	8.	Write History Report.
+		i.		

@@ -1,0 +1,29 @@
+	1.	Write ProbeKit.rb.
+		a)	ProbeCfg class
+			i	Tests
+			ii	Methods
+		b)	CurlHTTPCfg class
+			i	Tests
+			ii	Methods
+		c)	PingCfg class
+			i	Tests
+			ii	Methods
+		d)	ProbeSetCfg class
+			i	Tests
+			ii	Methods
+		d)	ProbeSetList class
+			i	Tests
+			ii	Methods
+		f)  ProbeKit module
+			i	Tests
+			ii	Methods
+		
+	2.	Write FlatKit.rb
+	3.	Write runProbeSets.rb
+		a)	Determine things that can be isolated to local methods.
+		b)  Put together basic test runs on live data, hitting things like google, eskimo, twitter, rhapsody, and ssc.com
+		c) 	Make script run for all tests.
+	4.	Design vague draft of history database, including:
+		i.		Time Slice Configuration Table, updated and tested for each new insertion.
+		ii.		Insertions from minute-by-minute data collection in primary spot monitor in threads.
+		iii.	

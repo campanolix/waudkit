@@ -1,0 +1,17 @@
+1.		Make runProbeSets.rb work.
+	i.		Initialize Object Sets.
+	ii.		Do Each Probe Set, and wait for them to finish to collect back
+back the threads.
+	iii.	Release the buffered probe data to the report area.
+	iv.		Clean up buffers.
+	v.		Identify non-passing data by:
+			a)	Flagging it with a stamp file
+			b)	Saving it to a history
+	vi.		send notifications
+			a)	For new failures specified by general default, or probe
+			specific tests
+			b)	For ongoing failures
+	vii.	Make new emails more well formatted
+	viii.	Retire tracked new problems that now pass.
+	ix.		Stamp uptime points for Spot itself, and for probed sites.
+	x.		Handle outstanding exceptions

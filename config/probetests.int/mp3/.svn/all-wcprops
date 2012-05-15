@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/repos/np/!svn/ver/8236/app/spot/trunk/cfg/prodtap/services/mp3
+END
+Label
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/repos/np/!svn/ver/5739/app/spot/trunk/cfg/prodtap/services/mp3/Label
+END
+CurlProbePeriod
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/repos/np/!svn/ver/8189/app/spot/trunk/cfg/prodtap/services/mp3/CurlProbePeriod
+END
+MinSitings4Failure
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/repos/np/!svn/ver/5739/app/spot/trunk/cfg/prodtap/services/mp3/MinSitings4Failure
+END
+Cookies
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/repos/np/!svn/ver/8236/app/spot/trunk/cfg/prodtap/services/mp3/Cookies
+END
+CurlTimeout
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/repos/np/!svn/ver/5739/app/spot/trunk/cfg/prodtap/services/mp3/CurlTimeout
+END
+Validations
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/repos/np/!svn/ver/5739/app/spot/trunk/cfg/prodtap/services/mp3/Validations
+END
+Color
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/repos/np/!svn/ver/5739/app/spot/trunk/cfg/prodtap/services/mp3/Color
+END
+URLList
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/repos/np/!svn/ver/5739/app/spot/trunk/cfg/prodtap/services/mp3/URLList
+END

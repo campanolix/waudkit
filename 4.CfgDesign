@@ -1,0 +1,16 @@
+	I.	Addresses
+		1.	Staging files
+			i.		URLlist.n
+			ii.		Addresses.n
+		2.	Production Cfgs
+			a.		TestBattery Directory
+				i.		named by Test Id
+				ii.		Label File
+				iii.	Cfg files general over all the test
+			a.		ProbeSets Directory
+				i.		ProbeSet Id Named file of sequences of Primary Addresses
+				ii.		Cfg files general over the probe set.
+			b.		Data Directory
+				i.		ProbeSet Id Named file of sequences of POSTS or other data files
+				ii.		Probe Id Named file of sequences of POSTS or other data files
+				iii.	Cfg files specific to the probe.
