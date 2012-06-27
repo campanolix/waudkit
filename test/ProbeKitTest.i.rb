@@ -53,15 +53,21 @@ describe ProbeKit do
 
 		it "must be able to send multiple probes:" do
 			pso = ProbeSequence.new('psid')
+			pso.setTimeOut(12)
 			cho1 = CurlHTTP.new('step1_google','http://google.com')
+			cho1.setTimeOut(8)
 			pso.addProbe(cho1)
 			cho2 = CurlHTTP.new('step2_eskimo','http://www.eskimo.com')
+			cho2.setTimeOut(8)
 			pso.addProbe(cho2)
 			cho3 = CurlHTTP.new('step3_rhapsody','http://rhapsody.com')
+			cho3.setTimeOut(8)
 			pso.addProbe(cho3)
 			cho4 = CurlHTTP.new('step4_hotmail','http://hotmail.com')
+			cho4.setTimeOut(8)
 			pso.addProbe(cho4)
 			cho5 = CurlHTTP.new('step5_twitter','http://twitter.com')
+			cho5.setTimeOut(8)
 			pso.addProbe(cho5)
 			pso.Sequence.length.must_equal 5
 			pso.clearDir
@@ -116,8 +122,10 @@ describe ProbeKit do
 			pso.clearDir
 		end
 
-		it "must be able to send a probe sequence with sequence dependencies:" do
-		# timeout 1 second with first expected to fail
+		it "must be able to send a heterogeneous probe sequence with sequence dependencies:" do
+		# Ping Int servers to reassure they are up.
+		# Hit Pixies Int.
+		# Extract Log Entries
 		end
 
 		it "must be able to send a probe sequence with cookie dependencies:" do
@@ -125,17 +133,11 @@ describe ProbeKit do
 		end
 
 		it "must be able to send a probe sequence with cookie dependencies:" do
-		# Int Account Set up
+		# 7d account creation
 		end
 
 		it "must be able to send a probe sequence with cookie dependencies:" do
 		# $0.00 price MP3 Purchase
-		end
-
-		it "must be able to send a heterogeneous probe sequence with sequence dependencies:" do
-		# Ping Int servers to reassure they are up.
-		# Hit Pixies Int.
-		# Extract Log Entries
 		end
 
 	end
@@ -149,6 +151,9 @@ describe ProbeKit do
 			tbo.addProbe( CurlHTTP.new('pid1','http://www.google.com') )
 			tbo.addProbe( CurlHTTP.new('pid2','http://www.twitter.com') )
 			tbo.addProbe( CurlHTTP.new('pid3','http://www.eskimo.com') )
+			tbo.Battery.each_value do |po|
+				po.setTimeOut(8)
+			end
 			tbo.length.must_equal 3
 			lambda { tbo.executeSerial }.must_be_silent
 			tbo.Battery.each_key do |bk|
@@ -251,9 +256,11 @@ describe ProbeKit do
 
 		it "should be able to execute a simple list of tests:" do
 			ptlo = ProbeTestList.new('test1')
+			ptlo.setTimeOut(16)
 			ptlo.clearDir
 			ptlo.length.must_equal 0
 			tbo = TestBattery.new('tbid1')
+			tbo.setTimeOut(12)
 			tbo.addProbe( CurlHTTP.new('pid1','http://www.google.com') )
 			tbo.addProbe( CurlHTTP.new('pid2','http://www.twitter.com') )
 			tbo.length.must_equal 2
@@ -261,6 +268,9 @@ describe ProbeKit do
 			ptlo.length.must_equal 1
 			tbo = TestBattery.new('tbid2')
 			tbo.addProbe( CurlHTTP.new('pid3','http://www.eskimo.com') )
+			tbo.Battery.each_value do |po|
+				po.setTimeOut(8)
+			end
 			tbo.length.must_equal 1
 			ptlo.addTest(tbo)
 			ptlo.length.must_equal 2
@@ -278,7 +288,8 @@ describe ProbeKit do
 				end
 			end
 
-			ch = ptlo.readContent
+			ch = nil
+			lambda { ch = ptlo.readContent }.must_be_silent
 			ch.class.must_equal Hash
 			ch.each_key do |tlk|
 				ch[tlk].each_key do |bk|
@@ -302,31 +313,50 @@ describe ProbeKit do
 			ptlo = ProbeTestList.new('test2')
 			ptlo.clearDir
 			ptlo.length.must_equal 0
+			ptlo.setTimeOut(16)
 			to1 = TestBattery.new('tbid1')
+			to1.setTimeOut(12)
 			pso1 = ProbeSequence.new('psid1')
+			pso1.setTimeOut(8)
 			pso1.addProbe( CurlHTTP.new('PId1','http://www.washington.edu') )
 			pso1.addProbe( CurlHTTP.new('PId2','http://launchpad.net') )
+			pso1.Sequence.each do |po|
+				po.setTimeOut(8)
+			end
 			to1.addProbe(pso1)
 			pso2 = ProbeSequence.new('psid2')
+			pso2.setTimeOut(8)
 			pso2.addProbe( CurlHTTP.new('PId3','http://hotmail.com') )
 			pso2.addProbe( CurlHTTP.new('PId4','http://yahoo.com') )
 			pso2.addProbe( CurlHTTP.new('PId5','http://gmail.com') )
+			pso2.Sequence.each do |po|
+				po.setTimeOut(8)
+			end
 			to1.addProbe(pso2)
 			ptlo.addTest(to1)
 			ptlo.length.must_equal 1
 			to2 = TestBattery.new('tbid2')
+			to2.setTimeOut(12)
 			to2.addProbe( CurlHTTP.new('PId6','http://www.eskimo.com') )
 			to2.addProbe( CurlHTTP.new('PId7','http://igoogle.com') )
 			to2.addProbe( CurlHTTP.new('PId8','http://rhap.com') )
 			to2.addProbe( CurlHTTP.new('PId9','http://mp3.rhapsody.com') )
+			to2.Battery.each_value do |po|
+				po.setTimeOut(8)
+			end
 			ptlo.addTest(to2)
 			to3 = TestBattery.new('tbid3')
+			to3.setTimeOut(12)
 			to3.addProbe( CurlHTTP.new('PId10','http://origin.rhapsody.com') )
+			to3.Battery.each_value do |po|
+				po.setTimeOut(8)
+			end
 			ptlo.addTest(to3)
 			ptlo.length.must_equal 3
 			lambda { ptlo.executeParallel }.must_be_silent
 			
-			ch = ptlo.readContent
+			ch = nil
+			lambda { ch = ptlo.readContent }.must_be_silent
 			ch.class.must_equal Hash
 			ch.each_key do |tlk|
 				ch[tlk].each_key do |bk|

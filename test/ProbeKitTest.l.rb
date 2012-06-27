@@ -35,7 +35,7 @@ describe ProbeKit do
 			pkbo.DataNode.must_equal 'nodestr'
 			pkbo.BaseDir.must_equal '/tmp'
 			pkbo.DataDir.must_equal '/tmp/nodestr'
-			pkbo.TimeOut.must_equal 5
+			pkbo.TimeOut.must_equal 1
 			pkbo.setBaseDir('/home/xeno')
 			pkbo.BaseDir.must_equal '/home/xeno'
 			pkbo.DataNode.must_equal 'nodestr'
@@ -86,7 +86,7 @@ describe ProbeKit do
 			cho.DataNode.must_equal 'nodestr'
 			cho.BaseDir.must_equal '/tmp'
 			cho.DataDir.must_equal '/tmp/nodestr'
-			cho.TimeOut.must_equal 60
+			cho.TimeOut.must_equal 1
 			cho.setBaseDir('/home/campanolix')
 			cho.BaseDir.must_equal '/home/campanolix'
 			cho.DataNode.must_equal 'nodestr'
@@ -103,7 +103,7 @@ describe ProbeKit do
 			cho.DataNode.must_equal		'nodestr' 
 			cho.StderrSpec.must_equal	'/tmp/nodestr/stderr' 
 			cho.StdoutSpec.must_equal	'/tmp/nodestr/stdout' 
-			cho.TimeOut.must_equal		60
+			cho.TimeOut.must_equal		1
 			cho.TraceOff.must_equal		false
 
 			cho.CurlHTTPHeaders.must_equal	nil
@@ -187,8 +187,12 @@ describe ProbeKit do
 			cho.clearDir
 		end
 
-		it "object.setTimeOut should be silent:" do
-			lambda { CurlHTTP.new('tid','http://testhost.com').setTimeOut(1) }.must_be_silent
+		it "object.setTimeOut should function correctly:" do
+			cho = CurlHTTP.new('tid','http://testhost.com')
+			lambda { cho.setTimeOut(1) }.must_be_silent
+			cho.TimeOut.must_equal 1
+			lambda { cho.setTimeOut(60) }.must_be_silent
+			cho.TimeOut.must_equal 60
 		end
 
 		it "object.setTimeOut should allow the following examples:" do
@@ -280,7 +284,7 @@ describe ProbeKit do
 			cho.DataNode.must_equal 'nodestr'
 			cho.BaseDir.must_equal '/tmp'
 			cho.DataDir.must_equal '/tmp/nodestr'
-			cho.TimeOut.must_equal 60
+			cho.TimeOut.must_equal 1
 			cho.setBaseDir('/home/xcampanoli')
 			cho.BaseDir.must_equal '/home/xcampanoli'
 			cho.DataNode.must_equal 'nodestr'
@@ -297,7 +301,7 @@ describe ProbeKit do
 			cho.DataNode.must_equal		'nodestr' 
 			cho.StderrSpec.must_equal	'/tmp/nodestr/stderr' 
 			cho.StdoutSpec.must_equal	'/tmp/nodestr/stdout' 
-			cho.TimeOut.must_equal		60
+			cho.TimeOut.must_equal		1
 			cho.TraceOff.must_equal		false
 		end
 
@@ -416,7 +420,7 @@ describe ProbeKit do
 			pso.DataNode.must_equal 'someid'
 			pso.DataDir.must_equal '/home/espy/someid'
 
-			pso.TimeOut.must_equal 66
+			pso.TimeOut.must_equal 1
 			pso.DataDir.must_equal '/home/espy/someid'
 		end
 
@@ -444,7 +448,6 @@ describe ProbeKit do
 		it "object.setTimeOut should NOT allow the following examples:" do
 			pso = ProbeSequence.new('tid')
 			lambda { pso.setTimeOut(0) }.must_raise(ArgumentError)
-			lambda { pso.setTimeOut(1) }.must_raise(ArgumentError)
 			lambda { pso.setTimeOut("") }.must_raise(ArgumentError)
 			lambda { pso.setTimeOut(nil) }.must_raise(ArgumentError)
 			lambda { pso.setTimeOut("xxxii") }.must_raise(ArgumentError)
@@ -536,7 +539,7 @@ describe ProbeKit do
 			pto.DataNode.must_equal 'anid'
 			pto.DataDir.must_equal '/home/mozart/anid'
 
-			pto.TimeOut.must_equal 75
+			pto.TimeOut.must_equal 1
 		end
 
 		it "must set its directory to be the upper directory to added objects (independent of order):" do
@@ -583,7 +586,6 @@ describe ProbeKit do
 		it "object.setTimeOut should NOT allow the following examples:" do
 			pto = TestBattery.new('tid')
 			lambda { pto.setTimeOut(0) }.must_raise(ArgumentError)
-			lambda { pto.setTimeOut(2) }.must_raise(ArgumentError)
 			lambda { pto.setTimeOut("") }.must_raise(ArgumentError)
 			lambda { pto.setTimeOut(nil) }.must_raise(ArgumentError)
 			lambda { pto.setTimeOut("xxxii") }.must_raise(ArgumentError)
@@ -651,7 +653,7 @@ describe ProbeKit do
 			ptlo.DataNode.must_equal 'thisid'
 			ptlo.DataDir.must_equal '/home/butterscotch/thisid'
 
-			ptlo.TimeOut.must_equal 90
+			ptlo.TimeOut.must_equal 1
 		end
 
 		it "object.setTimeOut should be silent:" do
@@ -670,7 +672,6 @@ describe ProbeKit do
 		it "object.setTimeOut should NOT allow the following examples:" do
 			ptlo = ProbeTestList.new('tid')
 			lambda { ptlo.setTimeOut(0) }.must_raise(ArgumentError)
-			lambda { ptlo.setTimeOut(4) }.must_raise(ArgumentError)
 			lambda { ptlo.setTimeOut("") }.must_raise(ArgumentError)
 			lambda { ptlo.setTimeOut(nil) }.must_raise(ArgumentError)
 			lambda { ptlo.setTimeOut("xxxii") }.must_raise(ArgumentError)

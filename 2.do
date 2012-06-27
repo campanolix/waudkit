@@ -1,7 +1,9 @@
 	1.	Firm up ProbeKit Module.
+		a.	Add ProbeValidation object.
+		b.	Make sure pixies login, My account login, mp3 purchase work.
 	2.	Start draft of Configuration module.
 		a.	Create a draft Pair of Configuration.rb / ConfigurationTests.rb
-		a.	Create a Full ConfigurationTests.rb Interface definition.
+		b.	Create a Full ConfigurationTests.rb Interface definition.
 		c.	Make Configuration.rb comply with ConfigurationTests.rb fully.
 		d.	Write and finish tests for Configuration module.
 			i.		Make basic probe work.

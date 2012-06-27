@@ -112,7 +112,7 @@ module ProbeKit
 			validateNodeSpec(dataNode)
 			@DataNode		= dataNode
 			setBaseDir('/tmp')
-			@TimeOut		= 5
+			@TimeOut		= 1
 		end
 
 		def readContent
@@ -169,7 +169,6 @@ module ProbeKit
 			@Addr			= parseAddress(addrO)
 			setFileSpecs
 
-			@TimeOut = 60
 			@TraceOff		= false	# By default have all trace settings on
 		end
 
@@ -413,8 +412,6 @@ module ProbeKit
 			@Sequence			= Array.new
 
 			super(dNode)
-
-			@TimeOut			= 66
 		end
 
 		def readContent(createHash=false)
@@ -450,7 +447,7 @@ module ProbeKit
 
 		def setTimeOut(timeOut)
 			begin
-				@TimeOut = getTimeOutNo(timeOut,3,1800)
+				@TimeOut = getTimeOutNo(timeOut,1,1800)
 			rescue NoMethodError, NameError => buffer
 				raise ArgumentError, "From NoMethodError:  #{buffer}"
 			end
@@ -509,7 +506,6 @@ module ProbeKit
 			super(dNode)
 
 			setBaseDir('/tmp')
-			@TimeOut = 75
 		end
 
 		def length
@@ -541,7 +537,7 @@ module ProbeKit
 
 		def setTimeOut(timeOut)
 			begin
-				@TimeOut = getTimeOutNo(timeOut,4,1799)
+				@TimeOut = getTimeOutNo(timeOut,1,1799)
 			rescue NoMethodError, NameError => buffer
 				raise ArgumentError, "From NoMethodError:  #{buffer}"
 			end
@@ -615,8 +611,6 @@ module ProbeKit
 			@TestHash	= Hash.new
 
 			super(dNode)
-
-			@TimeOut = 90
 		end
 		
 		def length
@@ -648,7 +642,7 @@ module ProbeKit
 
 		def setTimeOut(timeOut)
 			begin
-				@TimeOut = getTimeOutNo(timeOut,5,3600)
+				@TimeOut = getTimeOutNo(timeOut,1,3600)
 			rescue NoMethodError, NameError => buffer
 				raise ArgumentError, "From NoMethodError:  #{buffer}"
 			end
