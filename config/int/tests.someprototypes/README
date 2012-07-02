@@ -1,0 +1,10 @@
+generally:
+	AddressList, URLList, or Sequence Directory (which may contain its own
+		POST or other data files, HTTP headers, timeouts, and validations)
+	Label
+	MinSitings4Failure
+	TimeOut
+	Validations
+for HTTP only:
+	CurlHTTPHeaders
+	POST.text or POST.binary

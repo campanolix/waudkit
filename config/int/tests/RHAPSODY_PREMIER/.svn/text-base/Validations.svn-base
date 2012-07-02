@@ -1,0 +1,9 @@
+
+All MinSize1: 1024
+All ExistString1: <accountType type="string">RHAPSODY_PREMIER</accountType>
+All ExistString1: <bitRate type="number">128</bitRate>
+All ExistString1: <success type="boolean">true</success>
+All ExistString1: llnw
+
+All MinSize2: 512
+All ExistString2: > GET

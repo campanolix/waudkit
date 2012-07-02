@@ -1,0 +1,8 @@
+
+rhapsody MinSize1: 12000
+rhapsody ExistString1: <!-- rotw release: 
+rhap-mp3 MinSize1: 24
+rhap-mp3 ExistString1: JVM-memory-free=
+
+All MinSize2: 640
+All ExistString2: > GET
