@@ -1,24 +1,57 @@
 
-module CfgKit
+module CfgSet
 
-	class CfgAdministration
-		# Configuration general access GUI and other mechanisms and lifecycle aspects
+=begin
+	Note:  For the purposes of configurations, we have the following hierarchy:
+
+		Probes - represents a single probe, but containing all the addresses for a
+			probe step to be used in a TestBattery.
+
+		AdHocBattery - represents all the steps for all the parallel probes for a test.
+			Note also that this is a container class for Probes.
+
+		Battery < AdHocTestCfg - Contains all the maintenance configurations for
+			ongoing probing.  Note that this contains all the same data as TestBattery
+			in ProbeKit, but the organization is different to accommodate better
+			maintenance of the configurations.
+		
+		ProbeTests - A container class for Battery objects which also has generally
+			applicable configurations.
+
+		AdminTests < ProbeTests - for holding extra supporting data like raw
+			state items for use in maintaining the configurations more fluidly.
+=end
+	
+
+	class Probe
+		attr_reader :Timeout, :URLList, :Validations
 	end
 
-	class CfgProbeSets < CfgAdministration
+	class AdHocBattery
+
+		def initialize
+			@SequenceSet = Array.new
+		end
+
 	end
 
-	class CfgReporting < CfgProbeSets
+	class Battery < AdHocBattery
+		attr_reader :Label, :MinSitings4Failure, :ProbeSetPeriod
+
 	end
 
-	class CfgHistoryExtraction < CfgReporting
+	class ProbeTests
+
+		def initialize
+			@Batteries = Array.new
+		end
+
+	end
+
+	class AdminTests
+		# Add ons here for maintenance configuration systems.
+
 	end
 
 end
 
-# Dimensions/aspects:
-#	0.		QA Ad Hoc Version of Configurations, and perhaps more than one
-#	1.		Primary Data Collection Script
-#	2.		Primary Reporting / Tracking Load
-#	3.		Configurations Management
-#	4.		History Table of Configurations
