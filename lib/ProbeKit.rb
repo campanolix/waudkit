@@ -547,7 +547,7 @@ module ProbeKit
 
 #2345678901234567890123456789012345678901234567890123456789012345678901234567890
 
-	class ProbeTestList < ProbeKitBase
+	class TestList < ProbeKitBase
 
 		# Contains the list of all the probe sets (used to be called 'services')
 		# that the instance of Spot is to be monitoring.

@@ -40,7 +40,13 @@ module CfgSet
 
 	end
 
-	class ProbeTests
+	class AdminBattery < Battery
+		attr_reader :RawDataFiles, :CompileScripts
+
+	end
+
+	class Tests
+		# Cfg organized version of ProbeKit::TestList
 
 		def initialize
 			@Batteries = Array.new
@@ -48,10 +54,4 @@ module CfgSet
 
 	end
 
-	class AdminTests
-		# Add ons here for maintenance configuration systems.
-
-	end
-
-end
-
+end # End of CfgSet module
