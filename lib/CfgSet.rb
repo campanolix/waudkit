@@ -23,6 +23,160 @@ Note:  For the purposes of configurations, we have the following hierarchy:
 =end
 	
 # # # # Begin Internal Classes
+
+#        01234567890123456789012345678901234567890123456789012345678901234567890
+		# Module Utility Methods
+		
+	def validateAndStripAbsSpec(dirStr,methStr)
+		unless dirStr and dirStr.class == String and dirStr.length > 2
+			raise ArgumentError,
+			"Invalid #{self.class}  directory argument '#{dirStr}' in methStr."
+		end
+		lds = dirStr.strip
+		unless lds =~ /^\/\S\S+/
+			raise ArgumentError,
+				"Invalid #{self.class}  directory argument '#{lds}' in methStr."
+		end
+		return lds
+	end
+
+	def validateAndStripURL(sURI,methStr)
+		unless sURI and sURI.class == String
+			raise ArgumentError,
+				"Invalid #{self.class} sURI argument '#{sURI}' in #{methStr} method."
+		end
+		lurl = sURI.strip
+		unless lurl =~ /^https?:\/\/\S\S+$/
+			raise ArgumentError,
+				"Invalid #{self.class} sURI argument '#{lurl}' in #{methStr} method."
+		end
+		return lurl
+	end
+
+	def validateChannel(chStr,methStr)
+		validateStringObject(chStr,methStr,5)
+		return if chStr == Channel0
+		return if chStr == Channel1
+		return if chStr == Channel2
+		raise ArgumentError,
+	"Invalid #{self.class} chStr argument '#{chStr}' in #{methStr} method."
+	end
+
+	def validateFixnum(fixNum,methStr)
+		return if fixNum and fixNum.class == Fixnum
+		raise ArgumentError,
+			"Invalid #{self.class} fixNum argument '#{fixNum}' in #{methStr} method."
+	end
+
+	def validateStringObject(aStr,methStr,minLen=0)
+		unless aStr and aStr.class == String
+			raise ArgumentError,
+				"Invalid:  #{methStr} #{aStr} must be a String."
+		end
+		unless minLen.class == Fixnum
+			raise ArgumentError, "Invalid minLen specified."
+		end
+		unless aStr.length >= minLen
+			raise ArgumentError,
+"Invalid String Length:  #{methStr} #{aStr} must be at least length #{minLen}."
+		end
+	end
+
+	def validateTimeObject(tO,methStr)
+		unless tO and tO.class == Time
+			raise ArgumentError,
+				"Invalid #{self.class} tO argument '#{tO}' in #{methStr} method."
+		end
+	end
+
+	def zFill2DigitWholeNo(nN)
+		validateFixnum(nN,"zFill2DigitWholeNo(nN)")
+		if nN < 0
+			raise ArgumentError, "Invalid two digit whole number #{nN} < 0."
+		end
+		if nN > 99
+			raise ArgumentError, "Invalid two digit whole number #{nN} > 99."
+		end
+		return   "#{nN}" if nN > 9
+		return  "0#{nN}"
+	end
+
+	def zFill3DigitWholeNo(nN)
+		validateFixnum(nN,"zFill3DigitWholeNo(nN)")
+		if nN < 0
+			raise ArgumentError, "Invalid three digit whole number #{nN} < 0."
+		end
+		if nN > 999
+			raise ArgumentError, "Invalid three digit whole number #{nN} > 999."
+		end
+		return   "#{nN}" if nN > 99
+		return  "0#{nN}" if nN > 9
+		return "00#{nN}"
+	end
+
+	def zFill5DigitWholeNo(nN)
+		validateFixnum(nN,"zFill5DigitWholeNo(nN)")
+		if nN < 0
+			raise ArgumentError, "Invalid five digit whole number #{nN} < 0."
+		end
+		if nN > 99999
+			raise ArgumentError, "Invalid five digit whole number #{nN} > 999."
+		end
+		return   "#{nN}" if nN > 9999
+		return   "0#{nN}" if nN > 999
+		return   "00#{nN}" if nN > 99
+		return  "000#{nN}" if nN > 9
+		return "0000#{nN}"
+	end
+
+	def zFillMonthDay(mDay)
+		validateFixnum(mDay,"zFillMonthDay(mDay)")
+		if mDay < 1
+			raise ArgumentError, "Invalid Month Day #{mDay} < 1."
+		end
+		if mDay > 31
+			raise ArgumentError, "Invalid Month Day #{mDay} > 31."
+		end
+		result = zFill2DigitWholeNo(mDay)
+		return result
+	end
+
+	def zFillMonthNo(mNo)
+		validateFixnum(mNo,"zFillMonthNo(mNo)")
+		if mNo < 1
+			raise ArgumentError, "Invalid Month Number #{mNo} < 1."
+		end
+		if mNo > 12
+			raise ArgumentError, "Invalid Month Number #{mNo} > 12."
+		end
+		result = zFill2DigitWholeNo(mNo)
+		return result
+	end
+
+	def zFillSixtieth(sxNo)
+		validateFixnum(sxNo,"zFillSixtieth(sxNo)")
+		if sxNo < 0
+			raise ArgumentError, "Invalid sixtieth number #{sxNo} < 0."
+		end
+		if sxNo >= 60
+			raise ArgumentError, "Invalid sixtieth number #{sxNo} >= 60."
+		end
+		nostr = zFill2DigitWholeNo(sxNo)
+		return nostr
+	end
+
+	def zFillTwentyFourth(tfNo)
+		validateFixnum(tfNo,"zFillTwentyFourth(tfNo)")
+		if tfNo < 0
+			raise ArgumentError, "Invalid twentyfourth number #{tfNo} < 0."
+		end
+		if tfNo >= 24
+			raise ArgumentError, "Invalid twentyfourth number #{tfNo} >= 24."
+		end
+		nostr = zFill2DigitWholeNo(tfNo)
+		return nostr
+	end
+
 #2345678901234567890123456789012345678901234567890123456789012345678901234567890
 #
 #	Configuration Classes for loading, validating, and conveying flat file data.
@@ -289,12 +443,12 @@ class SpotEmailList < SpotFlatListCfg
 
 end
 
-class ServiceList < SpotFlatListCfg
+class TestList < SpotFlatListCfg
 
 	protected
 
 	def validateLine(lStr)
-		SpotService.validateServiceId(lStr,'ServiceList validateLine(lStr)')
+		SpotService.validateServiceId(lStr,'TestList validateLine(lStr)')
 		dspec = "#{@ServicesCfgDir}/#{lStr}"
 		unless File.exists?(dspec)
 			raise ArgumentError,
@@ -305,7 +459,7 @@ class ServiceList < SpotFlatListCfg
 	public
 
 	def initialize(cfgDir)
-		@CfgDir = validateAndStripAbsSpec(cfgDir,'ServiceList instantiator')
+		@CfgDir = validateAndStripAbsSpec(cfgDir,'TestList instantiator')
 		@CfgName = self.class.to_s.sub(/^\S+::/,'')
 		@CfgSpec = "#{@CfgDir}/#{@CfgName}"
 		@ServicesCfgDir = "#{@CfgDir}/services"
@@ -320,6 +474,90 @@ end
 #
 #	Concrete Configuration Classes.
 #
+
+class AdminEmailList < SpotEmailList
+
+	public
+
+	def initialize(cfgDir)
+		@EmptyOkay = false
+		@Label = 'Spot Administration Email List'
+		@MinLines = 1
+		@MaxLines = 16
+		super(cfgDir)
+	end
+
+end
+
+class AddressList < SpotFlatListCfg
+
+	protected
+
+	def validateLine(lStr)
+		validateAndStripURL(lStr,"instantiator for #{@Label}")
+	end
+
+	public
+
+	def initialize(cfgDir)
+		@EmptyOkay = false
+		@Label = 'Service URL List'
+		@MinLines = 1
+		@MaxLines = 100
+		super(cfgDir)
+	end
+
+	def dumpAsHTML
+		markup = ""
+		@Value.each do |line|
+			markup += "<nobr>" + CGI.escapeHTML(line) + "</nobr><br />\n"
+		end
+		return markup
+	end
+
+	def getURLByServerSpec(sSpec)
+		@Value.each do |lurl|
+			lsurl = validateAndStripURL(lurl,"instantiator for #{@Label}")
+			sspec = Regexp.escape(sSpec)
+			return lsurl if lsurl =~ /#{sspec}/
+		end
+		return nil
+	end
+
+	def hasURL?(urlStr)
+		@Value.each do |lurl|
+			return true if lurl == urlStr
+		end
+		return false
+	end
+
+end
+
+class AllDataExpirationMinutes < SpotWholeNoCfg
+
+	public
+
+	def initialize(cfgDir)
+		@EmptyOkay = false
+		@Label = 'All Data Expiration Minutes'
+		@Minimum = MinMinuteHistoryRange
+		@Maximum = MaxMinuteHistoryRange
+		super(cfgDir)
+	end
+
+end
+
+class AppTrace < SpotBooleanCfg
+
+	public
+
+	def initialize(cfgDir)
+		@Label = 'Turn on Any App Specific Traces of Addresses probed.'
+		super(cfgDir)
+	end
+
+end
+
 
 class BinaryPOSTData < SpotSpecOnlyCfg
 
@@ -370,61 +608,14 @@ class BottomHelp < SpotFlatListCfg
 
 end
 
-class BottomRows < ServiceList
+class BottomTests < TestList
 
 	public
 
 	def initialize(cfgDir)
-		@Label = 'Bottom Service Report Rows'
+		@Label = 'Bottom Test Batteries for Report'
 		@MinLines = 0
 		@MaxLines = 32
-		super(cfgDir)
-	end
-
-end
-
-class ChainProbeList < SpotFlatListCfg
-
-	public
-
-	def initialize(cfgDir)
-		@EmptyOkay = true
-		@Label = 'List of Probes in Chain'
-		@MinLines = 1
-		@MaxLines = 4196
-		super(cfgDir)
-	end
-
-end
-
-class ChainProbeSequence < SpotWholeNoCfg
-
-	def initialize(cfgDir)
-		@EmptyOkay = true
-		@Label = 'Sequence Number for Chain Probe'
-		@Minimum = 0
-		@Maximum = 9
-		super(cfgDir)
-	end
-
-end
-
-class Color < SpotSingleLineTextCfg
-	
-	protected
-
-	def assignValueIfValid
-		unless @LoadString =~ /^[a-z]{3,24}$/ or @Value =~ /^#\d{1,8}$/
-			raise SyntaxError, "Bad Color Id #{@LoadString}."
-		end
-		@Value = @LoadString
-	end
-
-	public
-
-	def initialize(cfgDir)
-		@EmptyOkay = false
-		@Label = 'Service Color'
 		super(cfgDir)
 	end
 
@@ -441,6 +632,7 @@ end
 
 class CronProbePeriod < SpotWholeNoCfg
 
+	# Must establish that 1 works, or 61, for that matter.  120, for instance, would be nice.
 	public
 
 	def initialize(cfgDir)
@@ -487,20 +679,6 @@ class CurlHTTPHeaders < SpotSingleLineTextCfg
 
 end
 
-class CurlTimeout < SpotWholeNoCfg
-
-	public
-
-	def initialize(cfgDir)
-		@EmptyOkay = false
-		@Label = 'Service Curl Timeout'
-		@Minimum = 1
-		@Maximum = 300
-		super(cfgDir)
-	end
-
-end
-
 class DailyEmailList < SpotEmailList
 
 	public
@@ -514,6 +692,20 @@ class DailyEmailList < SpotEmailList
 	end
 
 end
+
+class DataCollectionTests < TestList
+
+	public
+
+	def initialize(cfgDir)
+		@Label = 'Data Collection Test List.'
+		@MinLines = 0
+		@MaxLines = 32
+		super(cfgDir)
+	end
+
+end
+
 
 class FailureRange < SpotWholeNoCfg
 
@@ -602,6 +794,7 @@ class MonthlyEmailList < SpotEmailList
 end
 
 class NotificationList < SpotEmailList
+	# A feature to notify periodically and expire notifications is worth consideration.
 
 	public
 
@@ -610,20 +803,6 @@ class NotificationList < SpotEmailList
 		@Label = 'Failure Notification List'
 		@MinLines = 0
 		@MaxLines = 128
-		super(cfgDir)
-	end
-
-end
-
-class NotificationMinutes < SpotWholeNoCfg
-
-	public
-
-	def initialize(cfgDir)
-		@EmptyOkay = true
-		@Label = 'Notification Minutes'
-		@Minimum = 0
-		@Maximum = 60
 		super(cfgDir)
 	end
 
@@ -657,34 +836,6 @@ class POSTData < SpotSpecOnlyCfg
 
 end
 
-class ProbeSequenceStartMinute < SpotWholeNoCfg
-
-	public
-
-	def initialize(cfgDir)
-		@EmptyOkay = true
-		@Label = 'Probe Start Minute in Hour'
-		@Minimum = 0
-		@Maximum = 59
-		super(cfgDir)
-	end
-
-end
-
-class RecentSitingMinutes < SpotWholeNoCfg
-
-	public
-
-	def initialize(cfgDir)
-		@EmptyOkay = false
-		@Label = 'Recent Siting Minutes'
-		@Minimum = MinMinuteHistoryRange
-		@Maximum = MaxMinuteHistoryRange
-		super(cfgDir)
-	end
-
-end
-
 class RefreshSeconds < SpotWholeNoCfg
 
 	public
@@ -699,29 +850,29 @@ class RefreshSeconds < SpotWholeNoCfg
 
 end
 
-class ServersDefaultMinutes < SpotWholeNoCfg
+class ReNotificationPeriod < SpotWholeNoCfg
 
 	public
 
 	def initialize(cfgDir)
-		@EmptyOkay = false
-		@Label = 'Servers Default Minutes'
-		@Minimum = MinMinuteHistoryRange
-		@Maximum = MaxMinuteHistoryRange
+		@EmptyOkay = true
+		@Label = 'Notification Minutes'
+		@Minimum = 0
+		@Maximum = 60
 		super(cfgDir)
 	end
 
 end
 
-class AdminEmailList < SpotEmailList
+class ReNotificationStartMinute < SpotWholeNoCfg
 
 	public
 
 	def initialize(cfgDir)
-		@EmptyOkay = false
-		@Label = 'Spot Administration Email List'
-		@MinLines = 1
-		@MaxLines = 16
+		@EmptyOkay = true
+		@Label = 'Probe Start Minute in Hour'
+		@Minimum = 0
+		@Maximum = 59
 		super(cfgDir)
 	end
 
@@ -731,6 +882,7 @@ class StowProbeTimestamps < SpotBooleanCfg
 
 	public
 
+	# By default presumed to be turned on.
 	def initialize(cfgDir)
 		@Label = 'Collect and Stow Times for Steps in Probes.'
 		super(cfgDir)
@@ -738,13 +890,27 @@ class StowProbeTimestamps < SpotBooleanCfg
 
 end
 
-class TimeoutOverCurlMax < SpotWholeNoCfg
+class TestAppTimeout < SpotWholeNoCfg
 
 	public
 
 	def initialize(cfgDir)
 		@EmptyOkay = false
-		@Label = 'Timeout Over Curl Max'
+		@Label = 'Test Application Timeout'
+		@Minimum = 1
+		@Maximum = 300
+		super(cfgDir)
+	end
+
+end
+
+class TimeoutOverAppMax < SpotWholeNoCfg
+
+	public
+
+	def initialize(cfgDir)
+		@EmptyOkay = false
+		@Label = 'Timeout Over Test App Max'
 		@Minimum = 5
 		@Maximum = 300
 		super(cfgDir)
@@ -766,7 +932,7 @@ class TopHelp < SpotFlatListCfg
 
 end
 
-class TopRows < ServiceList
+class TopTests < TestList
 
 	public
 
@@ -775,17 +941,6 @@ class TopRows < ServiceList
 		@Label = 'Top Service Report Rows'
 		@MinLines = 0
 		@MaxLines = 9
-		super(cfgDir)
-	end
-
-end
-
-class TraceURLs < SpotBooleanCfg
-
-	public
-
-	def initialize(cfgDir)
-		@Label = 'Turn on Traces of URLs probed.'
 		super(cfgDir)
 	end
 
@@ -806,50 +961,6 @@ class TrackedProblemExpiration < SpotWholeNoCfg
 		@Minimum = 0
 		@Maximum = 60
 		super(cfgDir)
-	end
-
-end
-
-class URLList < SpotFlatListCfg
-
-	protected
-
-	def validateLine(lStr)
-		validateAndStripURL(lStr,"instantiator for #{@Label}")
-	end
-
-	public
-
-	def initialize(cfgDir)
-		@EmptyOkay = false
-		@Label = 'Service URL List'
-		@MinLines = 1
-		@MaxLines = 100
-		super(cfgDir)
-	end
-
-	def dumpAsHTML
-		markup = ""
-		@Value.each do |line|
-			markup += "<nobr>" + CGI.escapeHTML(line) + "</nobr><br />\n"
-		end
-		return markup
-	end
-
-	def getURLByServerSpec(sSpec)
-		@Value.each do |lurl|
-			lsurl = validateAndStripURL(lurl,"instantiator for #{@Label}")
-			sspec = Regexp.escape(sSpec)
-			return lsurl if lsurl =~ /#{sspec}/
-		end
-		return nil
-	end
-
-	def hasURL?(urlStr)
-		@Value.each do |lurl|
-			return true if lurl == urlStr
-		end
-		return false
 	end
 
 end
@@ -1099,34 +1210,98 @@ end
 
 
 class Probe
-	attr_reader :Timeout, :URLList, :Validations
-end
+	# Base cfg class for a single probe step.
+
+	attr_reader :Timeout, :AddressList, :Validations
+
+	# # # # Commented List of Configuration Objects:
+	#
+	#	AddressList
+	#	BinaryPOSTData
+	#	CurlHTTPHeaders
+	#	PostData
+	#	# Future function:  PreviousStepPostData
+	#	TestAppTimeout
+	#	Timeout
+	#	Validations
+
+end # of Probe class
 
 class AdHocBattery
+	# Base cfg class for a test battery set.  This class includes all
+	# 	needed for any arbitrary probe set, but does not include enough
+	#	for ongoing monitoring.
+
+	# # # # Commented List of Configuration Objects:
+	#
+	# AppTrace
+	# Cookies
+	# CurlHTTPHeaders
+	# StowProbeTimestamps
+	# TimeoutOverAppMax 
 
 	def initialize
 		@SequenceSet = Array.new
 	end
 
-end
+end # of AdHocBattery class
 
 class Battery < AdHocBattery
+	# Includes all the data needed for data collection in an ongoing
+	# monitoring activity.
+
+	# # # # Commented List of Configuration Objects:
+	#
+	# AdminEmailList
+	# CrontabPeriod
+	# DataCollectionTests
+	# FailureRange
+	# FailureRangeStartOffset
+	# IgnoreStdout
+	# MinSitings4Failure
+	# NotificationList
+	# ReNotificationPeriod
+	# ReNotificationStartMinute
+	# TestAppTimeout
+	# TrackedProblemExpiration
+
 	attr_reader :Label, :MinSitings4Failure, :ProbeSetPeriod
 
-end
+end # of Battery class
 
 class AdminBattery < Battery
+	# Includes all the data needed for reporting and probe configuration
+	# maintenance.
+
+	# # # # Commented List of Configuration Objects:
+	#
+	# BottomColumns
+	# BottomHelp
+	# BottomTests
+	# DailyEmailList
+	# MonthlyEmailList
+	# Label
+	# RefreshSeconds
+	# TopHelp
+	# TopTests
+	# WeeklyEmailList
+
 	attr_reader :RawDataFiles, :CompileScripts
 
-end
+end # of AdminBattery class
 
 class Tests
+	# # # # Commented List of Configuration Objects:
+	#
+	# AllDataExpirationMinutes
+
+
 	# Cfg organized version of ProbeKit::TestList
 
 	def initialize
 		@Batteries = Array.new
 	end
 
-end
+end # of Tests class
 
 end # End of CfgSet module
