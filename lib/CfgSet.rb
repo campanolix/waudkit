@@ -1208,6 +1208,51 @@ end
 
 # # # # End Internal Classes
 
+class CfgSetLevelBase
+
+	protected
+
+	def validateAbsSpec(dirStr)
+		unless dirStr =~ /^\/\S\S+[^\/]$/
+			raise ArgumentError,
+				"Invalid #{self.class} directory argument |#{dirStr}|"
+		end
+	end
+
+	def validateNodeSpec(nodeStr)
+		unless nodeStr =~ /^[^\/]+\S*[^\/]+$/
+			raise ArgumentError,
+				"Invalid #{self.class} directory argument |#{nodeStr}|"
+		end
+	end
+
+	public
+
+	attr_reader :BaseDir, :DataDir, :DataNode, :TimeOut
+
+	def initialize(dataNode='default')
+		validateNodeSpec(dataNode)
+		@DataNode		= dataNode
+		setBaseDir('/tmp')
+		@TimeOut		= 1
+	end
+
+	def readContent
+		raise ArgumentError, "readContent is Pure Virtual in this parent class."
+	end
+
+	def readLog2
+		raise ArgumentError, "readLog2 is Pure Virtual in this parent class."
+	end
+
+	def setBaseDir(bDir)
+		validateAbsSpec(bDir)
+		@BaseDir		= bDir
+		@DataDir		= "#{@BaseDir}/#{@DataNode}"
+	end
+
+end
+
 
 class Probe
 	# Base cfg class for a single probe step.
@@ -1220,7 +1265,6 @@ class Probe
 	#	BinaryPOSTData
 	#	CurlHTTPHeaders
 	#	PostData
-	#	# Future function:  PreviousStepPostData
 	#	TestAppTimeout
 	#	Timeout
 	#	Validations
@@ -1263,7 +1307,6 @@ class Battery < AdHocBattery
 	# ReNotificationPeriod
 	# ReNotificationStartMinute
 	# TestAppTimeout
-
 
 end # of Battery class
 
