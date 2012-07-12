@@ -1263,9 +1263,7 @@ class Battery < AdHocBattery
 	# ReNotificationPeriod
 	# ReNotificationStartMinute
 	# TestAppTimeout
-	# TrackedProblemExpiration
 
-	attr_reader :Label, :MinSitings4Failure, :ProbeSetPeriod
 
 end # of Battery class
 
@@ -1286,14 +1284,24 @@ class AdminBattery < Battery
 	# TopTests
 	# WeeklyEmailList
 
-	attr_reader :RawDataFiles, :CompileScripts
+	attr_reader :Label
 
 end # of AdminBattery class
 
-class Tests
+class AdhocTests
+	# # # # Commented List of Configuration Objects:
+	#
+	# AllProbesTimeout
+	# ProbeDefaultTimeout
+	# UserData
+end
+
+class Tests < AdhocTests
 	# # # # Commented List of Configuration Objects:
 	#
 	# AllDataExpirationMinutes
+	# TimeRangeDefinitions
+	# TrackedProblemExpiration
 
 
 	# Cfg organized version of ProbeKit::TestList
