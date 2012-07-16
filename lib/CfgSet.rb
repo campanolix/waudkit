@@ -1208,7 +1208,9 @@ end
 
 # # # # End Internal Classes
 
-class CfgSetLevelBase
+class DirectoryBase
+
+	DefaultBaseDir = "#{ENV['HOME']}/waudkit"
 
 	protected
 
@@ -1228,131 +1230,123 @@ class CfgSetLevelBase
 
 	public
 
-	attr_reader :BaseDir, :DataDir, :DataNode, :TimeOut
+	attr_reader :BaseDir, :DataNode
 
-	def initialize(dataNode='default')
+	def initialize(dataNode,baseDir=DefaultBaseDir)
 		validateNodeSpec(dataNode)
+		validateAbsSpec(baseDir)
+
+		@BaseDir		= baseDir
 		@DataNode		= dataNode
-		setBaseDir('/tmp')
-		@TimeOut		= 1
-	end
-
-	def readContent
-		raise ArgumentError, "readContent is Pure Virtual in this parent class."
-	end
-
-	def readLog2
-		raise ArgumentError, "readLog2 is Pure Virtual in this parent class."
-	end
-
-	def setBaseDir(bDir)
-		validateAbsSpec(bDir)
-		@BaseDir		= bDir
 		@DataDir		= "#{@BaseDir}/#{@DataNode}"
 	end
 
 end
 
+#        01234567890123456789012345678901234567890123456789012345678901234567890
 
-class Probe
+class Probe < DirectoryBase
 	# Base cfg class for a single probe step.
 
-	attr_reader :Timeout, :AddressList, :Validations
+	attr_accessor :AddressList, :BinaryPOSTData, :CurlHTTPHeaders, :POSTData,
+			:TestAppTimeout, :Timeout, :Validations
 
-	# # # # Commented List of Configuration Objects:
-	#
-	#	AddressList
-	#	BinaryPOSTData
-	#	CurlHTTPHeaders
-	#	PostData
-	#	TestAppTimeout
-	#	Timeout
-	#	Validations
+	def initialize(dataNode,baseDir)
+		super(dataNode,baseDir)
+
+		@AddressList		= AddressList.new
+		@BinaryPOSTData		= BinaryPOSTData.new
+		@CurlHTTPHeaders	= CurlHTTPHeaders.new
+		@POSTData			= POSTData.new
+		@TestAppTimeout		= TestAppTimeout.new
+		@Timeout			= Timeout.new
+		@Validations		= Validations.new
+	end
 
 end # of Probe class
 
-class AdHocBattery
+#        01234567890123456789012345678901234567890123456789012345678901234567890
+
+class AdHocBattery < DirectoryBase
 	# Base cfg class for a test battery set.  This class includes all
 	# 	needed for any arbitrary probe set, but does not include enough
 	#	for ongoing monitoring.
 
-	# # # # Commented List of Configuration Objects:
-	#
-	# AppTrace
-	# Cookies
-	# CurlHTTPHeaders
-	# StowProbeTimestamps
-	# TimeoutOverAppMax 
+	attr_accessor :AppTrace, :Cookies, :CurlHTTPHeaders, :SequenceSet,
+			:StowProbeTimestamps, :TimeoutOverAppMax
 
-	def initialize
+	def initialize(dataNode,baseDir)
+		super(dataNode,baseDir)
+
 		@SequenceSet = Array.new
 	end
 
 end # of AdHocBattery class
 
+#        01234567890123456789012345678901234567890123456789012345678901234567890
+
 class Battery < AdHocBattery
 	# Includes all the data needed for data collection in an ongoing
 	# monitoring activity.
 
-	# # # # Commented List of Configuration Objects:
-	#
-	# AdminEmailList
-	# CrontabPeriod
-	# DataCollectionTests
-	# FailureRange
-	# FailureRangeStartOffset
-	# IgnoreStdout
-	# MinSitings4Failure
-	# NotificationList
-	# ReNotificationPeriod
-	# ReNotificationStartMinute
-	# TestAppTimeout
+	attr_accessor :AdminEmailList, :CrontabPeriod, :FailureRange,
+		:FailureRangeStartOffset, :IgnoreStdout, :MinSitings4Failure,
+		:NotificationList, :ReNotificationPeriod, :ReNotificationStartMinute,
+		:TestAppTimeout
+
+	def initialize(dataNode,baseDir)
+		super(dataNode,baseDir)
+
+	end
 
 end # of Battery class
+
+#        01234567890123456789012345678901234567890123456789012345678901234567890
 
 class AdminBattery < Battery
 	# Includes all the data needed for reporting and probe configuration
 	# maintenance.
 
-	# # # # Commented List of Configuration Objects:
-	#
-	# BottomColumns
-	# BottomHelp
-	# BottomTests
-	# DailyEmailList
-	# MonthlyEmailList
-	# Label
-	# RefreshSeconds
-	# TopHelp
-	# TopTests
-	# WeeklyEmailList
+	attr_accessor :BottomColumns, :BottomHelp, :BottomTests, :DailyEmailList,
+		:MonthlyEmailList, :Label, :RefreshSeconds, :TopHelp, :TopTests,
+		:WeeklyEmailList
 
-	attr_reader :Label
+	def initialize(dataNode,baseDir)
+		super(dataNode,baseDir)
+
+		@SequenceSet = Array.new
+	end
 
 end # of AdminBattery class
 
-class AdhocTests
-	# # # # Commented List of Configuration Objects:
-	#
-	# AllProbesTimeout
-	# ProbeDefaultTimeout
-	# UserData
+#        01234567890123456789012345678901234567890123456789012345678901234567890
+
+class AdhocTests < DirectoryBase
+
+	attr_accessor :AllProbesTimeout, :ProbeDefaultTimeout, :UserData
+
+	def initialize(dataNode,baseDir)
+		super(dataNode,baseDir)
+
+		@Batteries = Array.new
+	end
+
 end
 
-class Tests < AdhocTests
-	# # # # Commented List of Configuration Objects:
-	#
-	# AllDataExpirationMinutes
-	# TimeRangeDefinitions
-	# TrackedProblemExpiration
+#        01234567890123456789012345678901234567890123456789012345678901234567890
 
+class Tests < AdhocTests
 
 	# Cfg organized version of ProbeKit::TestList
 
-	def initialize
-		@Batteries = Array.new
+	attr_accessor :AllDataExpirationMinutes, :TimeRangeDefinitions,
+		:TrackedProblemExpiration
+
+	def initialize(dataNode,baseDir)
+		super(dataNode,baseDir)
 	end
 
 end # of Tests class
 
+	# DataCollectionTests???
 end # End of CfgSet module
