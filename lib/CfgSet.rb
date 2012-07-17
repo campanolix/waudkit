@@ -1272,13 +1272,20 @@ class AdHocBattery < DirectoryBase
 	# 	needed for any arbitrary probe set, but does not include enough
 	#	for ongoing monitoring.
 
-	attr_accessor :AppTrace, :Cookies, :CurlHTTPHeaders, :SequenceSet,
+	attr_accessor :AppTrace, :Cookies, :CurlHTTPHeaders, :ProbeSequence,
 			:StowProbeTimestamps, :TimeoutOverAppMax
 
 	def initialize(dataNode,baseDir)
 		super(dataNode,baseDir)
 
-		@SequenceSet = Array.new
+		@AppTrace				= AppTrace.new
+		@Cookies				= Cookies.new
+		@CurlHTTPHeaders		= CurlHTTPHeaders.new
+		@ProbeSequence			= Array.new
+		@StowProbeTimestamps	= StowProbeTimestamps.new
+		@TimeoutOverAppMax		= TimeoutOverAppMax.new
+
+		# Loop of reading Probe configurations here
 	end
 
 end # of AdHocBattery class
@@ -1292,11 +1299,22 @@ class Battery < AdHocBattery
 	attr_accessor :AdminEmailList, :CrontabPeriod, :FailureRange,
 		:FailureRangeStartOffset, :IgnoreStdout, :MinSitings4Failure,
 		:NotificationList, :ReNotificationPeriod, :ReNotificationStartMinute,
-		:TestAppTimeout
+		:TestAppTimeout, :TestName
 
 	def initialize(dataNode,baseDir)
 		super(dataNode,baseDir)
 
+		@AdminEmailList				= AdminEmailList.new
+		@CrontabPeriod				= CrontabPeriod.new
+		@FailureRange 				= FailureRange.new
+		@FailureRangeStartOffset	= FailureRangeStartOffset.new
+		@IgnoreStdout				= IgnoreStdout.new
+		@MinSitings4Failure 		= MinSitings4Failure.new
+		@NotificationList			= NotificationList.new
+		@ReNotificationPeriod		= ReNotificationPeriod.new
+		@ReNotificationStartMinute	= ReNotificationStartMinute.new
+		@TestAppTimeout				= TestAppTimeout.new
+		@TestName					= TestName.new
 	end
 
 end # of Battery class
@@ -1314,7 +1332,16 @@ class AdminBattery < Battery
 	def initialize(dataNode,baseDir)
 		super(dataNode,baseDir)
 
-		@SequenceSet = Array.new
+		@BottomColumns		= BottomColumns.new
+		@BottomHelp			= BottomHelp.new
+		@BottomTests		= BottomTests.new
+		@DailyEmailList		= DailyEmailList.new
+		@MonthlyEmailList	= MonthlyEmailList.new
+		@Label				= Label.new
+		@RefreshSeconds		= RefreshSeconds.new
+		@TopHelp			= TopHelp.new
+		@TopTests			= TopTests.new
+		@WeeklyEmailList	= WeeklyEmailList.new
 	end
 
 end # of AdminBattery class
@@ -1328,7 +1355,10 @@ class AdhocTests < DirectoryBase
 	def initialize(dataNode,baseDir)
 		super(dataNode,baseDir)
 
-		@Batteries = Array.new
+		@AllProbesTimeout		= AllProbesTimeout.new
+		@DataCollectionTests	= DataCollectionTests.new
+		@ProbeDefaultTimeout	= ProbeDefaultTimeout.new
+		@UserData				= UserData.new
 	end
 
 end
@@ -1344,9 +1374,12 @@ class Tests < AdhocTests
 
 	def initialize(dataNode,baseDir)
 		super(dataNode,baseDir)
+
+		@AllDataExpirationMinutes	= AllDataExpirationMinutes.new
+		@TimeRangeDefinitions		= TimeRangeDefinitions.new
+		@TrackedProblemExpiration	= TrackedProblemExpiration.new
 	end
 
 end # of Tests class
 
-	# DataCollectionTests???
 end # End of CfgSet module
