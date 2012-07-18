@@ -4,7 +4,7 @@ module CfgSet
 =begin
 Note:  For the purposes of configurations, we have the following hierarchy:
 
-		Probes - represents a single probe, but containing all the addresses for a
+		Probe - represents a single probe, but containing all the addresses for a
 			probe step to be used in a TestBattery.
 
 		AdHocBattery - represents all the steps for all the parallel probes for a test.
@@ -15,11 +15,14 @@ Note:  For the purposes of configurations, we have the following hierarchy:
 			in ProbeKit, but the organization is different to accommodate better
 			maintenance of the configurations.
 		
-		ProbeTests - A container class for Battery objects which also has generally
+		AdminBattery < Battery - For all the extra configurations needed for administration
+			and reporting with ongoing test probes.
+
+		AdhocTests - A container class for Battery objects which also has generally
 			applicable configurations.
 
-		AdminTests < ProbeTests - for holding extra supporting data like raw
-			state items for use in maintaining the configurations more fluidly.
+		Tests < AdhocTests - For general use in ongoing production activities.
+
 =end
 	
 # # # # Begin Internal Classes
@@ -1230,15 +1233,15 @@ class DirectoryBase
 
 	public
 
-	attr_reader :BaseDir, :DataNode
+	attr_reader :BaseDir, :CfgNode
 
-	def initialize(dataNode,baseDir=DefaultBaseDir)
-		validateNodeSpec(dataNode)
+	def initialize(cfgNode,baseDir=DefaultBaseDir)
+		validateNodeSpec(cfgNode)
 		validateAbsSpec(baseDir)
 
 		@BaseDir		= baseDir
-		@DataNode		= dataNode
-		@DataDir		= "#{@BaseDir}/#{@DataNode}"
+		@CfgNode		= cfgNode
+		@CfgDir			= "#{@BaseDir}/#{@CfgNode}"
 	end
 
 end
@@ -1249,18 +1252,17 @@ class Probe < DirectoryBase
 	# Base cfg class for a single probe step.
 
 	attr_accessor :AddressList, :BinaryPOSTData, :CurlHTTPHeaders, :POSTData,
-			:TestAppTimeout, :Timeout, :Validations
+			:TestAppTimeout, :Validations
 
-	def initialize(dataNode,baseDir)
-		super(dataNode,baseDir)
+	def initialize(cfgNode,baseDir)
+		super(cfgNode,baseDir)
 
-		@AddressList		= AddressList.new
-		@BinaryPOSTData		= BinaryPOSTData.new
-		@CurlHTTPHeaders	= CurlHTTPHeaders.new
-		@POSTData			= POSTData.new
-		@TestAppTimeout		= TestAppTimeout.new
-		@Timeout			= Timeout.new
-		@Validations		= Validations.new
+		@AddressList		= AddressList.new(@CfgDir)
+		@BinaryPOSTData		= BinaryPOSTData.new(@CfgDir)
+		@CurlHTTPHeaders	= CurlHTTPHeaders.new(@CfgDir)
+		@POSTData			= POSTData.new(@CfgDir)
+		@TestAppTimeout		= TestAppTimeout.new(@CfgDir)
+		@Validations		= Validations.new(@CfgDir)
 	end
 
 end # of Probe class
@@ -1275,15 +1277,16 @@ class AdHocBattery < DirectoryBase
 	attr_accessor :AppTrace, :Cookies, :CurlHTTPHeaders, :ProbeSequence,
 			:StowProbeTimestamps, :TimeoutOverAppMax
 
-	def initialize(dataNode,baseDir)
-		super(dataNode,baseDir)
+	def initialize(cfgNode,baseDir)
+		super(cfgNode,baseDir)
 
-		@AppTrace				= AppTrace.new
-		@Cookies				= Cookies.new
-		@CurlHTTPHeaders		= CurlHTTPHeaders.new
-		@ProbeSequence			= Array.new
-		@StowProbeTimestamps	= StowProbeTimestamps.new
-		@TimeoutOverAppMax		= TimeoutOverAppMax.new
+		@AppTrace				= AppTrace.new(@CfgDir)
+		@Cookies				= Cookies.new(@CfgDir)
+		@CurlHTTPHeaders		= CurlHTTPHeaders.new(@CfgDir)
+		@StowProbeTimestamps	= StowProbeTimestamps.new(@CfgDir)
+		@TimeoutOverAppMax		= TimeoutOverAppMax.new(@CfgDir)
+
+		@ProbeSequence			= Array.new(@CfgDir)
 
 		# Loop of reading Probe configurations here
 	end
@@ -1301,20 +1304,20 @@ class Battery < AdHocBattery
 		:NotificationList, :ReNotificationPeriod, :ReNotificationStartMinute,
 		:TestAppTimeout, :TestName
 
-	def initialize(dataNode,baseDir)
-		super(dataNode,baseDir)
+	def initialize(cfgNode,baseDir)
+		super(cfgNode,baseDir)
 
-		@AdminEmailList				= AdminEmailList.new
-		@CrontabPeriod				= CrontabPeriod.new
-		@FailureRange 				= FailureRange.new
-		@FailureRangeStartOffset	= FailureRangeStartOffset.new
-		@IgnoreStdout				= IgnoreStdout.new
-		@MinSitings4Failure 		= MinSitings4Failure.new
-		@NotificationList			= NotificationList.new
-		@ReNotificationPeriod		= ReNotificationPeriod.new
-		@ReNotificationStartMinute	= ReNotificationStartMinute.new
-		@TestAppTimeout				= TestAppTimeout.new
-		@TestName					= TestName.new
+		@AdminEmailList				= AdminEmailList.new(@CfgDir)
+		@CrontabPeriod				= CrontabPeriod.new(@CfgDir)
+		@FailureRange 				= FailureRange.new(@CfgDir)
+		@FailureRangeStartOffset	= FailureRangeStartOffset.new(@CfgDir)
+		@IgnoreStdout				= IgnoreStdout.new(@CfgDir)
+		@MinSitings4Failure 		= MinSitings4Failure.new(@CfgDir)
+		@NotificationList			= NotificationList.new(@CfgDir)
+		@ReNotificationPeriod		= ReNotificationPeriod.new(@CfgDir)
+		@ReNotificationStartMinute	= ReNotificationStartMinute.new(@CfgDir)
+		@TestAppTimeout				= TestAppTimeout.new(@CfgDir)
+		@TestName					= TestName.new(@CfgDir)
 	end
 
 end # of Battery class
@@ -1329,19 +1332,19 @@ class AdminBattery < Battery
 		:MonthlyEmailList, :Label, :RefreshSeconds, :TopHelp, :TopTests,
 		:WeeklyEmailList
 
-	def initialize(dataNode,baseDir)
-		super(dataNode,baseDir)
+	def initialize(cfgNode,baseDir)
+		super(cfgNode,baseDir)
 
-		@BottomColumns		= BottomColumns.new
-		@BottomHelp			= BottomHelp.new
-		@BottomTests		= BottomTests.new
-		@DailyEmailList		= DailyEmailList.new
-		@MonthlyEmailList	= MonthlyEmailList.new
-		@Label				= Label.new
-		@RefreshSeconds		= RefreshSeconds.new
-		@TopHelp			= TopHelp.new
-		@TopTests			= TopTests.new
-		@WeeklyEmailList	= WeeklyEmailList.new
+		@BottomColumns		= BottomColumns.new(@CfgDir)
+		@BottomHelp			= BottomHelp.new(@CfgDir)
+		@BottomTests		= BottomTests.new(@CfgDir)
+		@DailyEmailList		= DailyEmailList.new(@CfgDir)
+		@MonthlyEmailList	= MonthlyEmailList.new(@CfgDir)
+		@Label				= Label.new(@CfgDir)
+		@RefreshSeconds		= RefreshSeconds.new(@CfgDir)
+		@TopHelp			= TopHelp.new(@CfgDir)
+		@TopTests			= TopTests.new(@CfgDir)
+		@WeeklyEmailList	= WeeklyEmailList.new(@CfgDir)
 	end
 
 end # of AdminBattery class
@@ -1352,16 +1355,26 @@ class AdhocTests < DirectoryBase
 
 	attr_accessor :AllProbesTimeout, :ProbeDefaultTimeout, :UserData
 
-	def initialize(dataNode,baseDir)
-		super(dataNode,baseDir)
-
-		@AllProbesTimeout		= AllProbesTimeout.new
-		@DataCollectionTests	= DataCollectionTests.new
-		@ProbeDefaultTimeout	= ProbeDefaultTimeout.new
-		@UserData				= UserData.new
+	def loadTests
+		@DataCollectionTests.each_test do |tname|
+			@TestList.push(AdhocBattery.new(tname,@CfgDir))
+		end
 	end
 
-end
+	def initialize(cfgNode,baseDir)
+		super(cfgNode,baseDir)
+
+		@AllProbesTimeout		= AllProbesTimeout.new(@CfgDir)
+		@DataCollectionTests	= DataCollectionTests.new(@CfgDir)
+		@ProbeDefaultTimeout	= ProbeDefaultTimeout.new(@CfgDir)
+		@UserData				= UserData.new(@CfgDir)
+
+		@TestList				= Array.new
+
+		loadTests
+	end
+
+end # of AdhocTests
 
 #        01234567890123456789012345678901234567890123456789012345678901234567890
 
@@ -1372,14 +1385,31 @@ class Tests < AdhocTests
 	attr_accessor :AllDataExpirationMinutes, :TimeRangeDefinitions,
 		:TrackedProblemExpiration
 
-	def initialize(dataNode,baseDir)
-		super(dataNode,baseDir)
+	def loadTests
+		@DataCollectionTests.each_test do |tname|
+			@TestList.push(Battery.new(tname,@CfgDir))
+		end
+	end
 
-		@AllDataExpirationMinutes	= AllDataExpirationMinutes.new
-		@TimeRangeDefinitions		= TimeRangeDefinitions.new
-		@TrackedProblemExpiration	= TrackedProblemExpiration.new
+	def initialize(cfgNode,baseDir)
+
+		@AllDataExpirationMinutes	= AllDataExpirationMinutes.new(@CfgDir)
+		@TimeRangeDefinitions		= TimeRangeDefinitions.new(@CfgDir)
+		@TrackedProblemExpiration	= TrackedProblemExpiration.new(@CfgDir)
+
+		super(cfgNode,baseDir)
 	end
 
 end # of Tests class
+
+class AdminTests < Tests
+
+	def loadTests
+		@DataCollectionTests.each_test do |tname|
+			@TestList.push(AdminBattery.new(tname,@CfgDir))
+		end
+	end
+
+end
 
 end # End of CfgSet module
