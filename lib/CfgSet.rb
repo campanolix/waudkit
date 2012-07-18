@@ -1096,7 +1096,7 @@ class Validations < SpotFlatCfg
 		unless sprO.StderrContent.length > 0 
 			explanation = "No Stderr Diagnostics Saved from Probe"
 			diagnostics = "sprO.StderrContent.length not positive."
-			@ErrorNote = ErrorNote.new(sprO.ServerSpec,sprO.ServerURL,explanation,diagnostics))
+			@ErrorNote = ErrorNote.new(sprO.ServerSpec,sprO.ServerURL,explanation,diagnostics)
 			return true
 		end
 
@@ -1106,7 +1106,7 @@ class Validations < SpotFlatCfg
 				"FAIL on Content2(#{sprO.ServerSpec}, " +
 				"length #{sprO.StderrContent.length})) " +
 				"match with SuccessHTTPRegex:  #{SuccessHTTPRegex}."
-			@ErrorNote = ErrorNote.new(sprO.ServerSpec,sprO.ServerURL,explanation,diagnostics))
+			@ErrorNote = ErrorNote.new(sprO.ServerSpec,sprO.ServerURL,explanation,diagnostics)
 			return true
 		end
 		
@@ -1119,10 +1119,8 @@ class Validations < SpotFlatCfg
 		unless sprO.StdoutContent and sprO.StdoutContent.length > 0
 			explanation = "No Stdout Content Saved from Probe"
 			diagnostics = "sprO.StdoutContent.length not positive."
-			@ErrorNote = ErrorNote.new(sprO.ServerSpec,sprO.ServerURL,explanation,diagnostics))
+			@ErrorNote = ErrorNote.new(sprO.ServerSpec,sprO.ServerURL,explanation,diagnostics)
 			return true
-		end
-
 		end
 
 		return true unless validateOverMinSize(sprO.StdoutContent,'stdout',sprO.ServerSpec,sprO.ServerURL)
@@ -1146,7 +1144,7 @@ class Validations < SpotFlatCfg
 					"server[#{serverStr}](sstr:#{sstr}), " +
 					"Minimum Size for #{contentType} is #{@MinSize[contentType][sstr]}, " +
 					"actual is #{contentStr.length}."
-				@ErrorNote = ErrorNote.new(serverStr,serverURL,explanation,diagnostics))
+				@ErrorNote = ErrorNote.new(serverStr,serverURL,explanation,diagnostics)
 				return false
 			end
 		end
@@ -1160,7 +1158,7 @@ class Validations < SpotFlatCfg
 		validateStringObject(passType,'validateStrings(contentStr,contentType,serverStr,passType)')
 		unless contentStr and contentStr.class == String and contentStr =~ /\S+/
 			explanation = "FAIL NO CONTENT (#{contentStr}) for server."
-			@ErrorNote = ErrorNote.new(serverStr,serverURL,explanation,""))
+			@ErrorNote = ErrorNote.new(serverStr,serverURL,explanation,"")
 			return false
 		end
 		@Strings[passType][contentType].keys.each do |sstr|
@@ -1185,7 +1183,7 @@ class Validations < SpotFlatCfg
 					raise SyntaxError, "Invalid passType #{passType}."
 				end
 				if explanation then
-					@ErrorNote = ErrorNote.new(serverStr,serverURL,explanation,diagnostics))
+					@ErrorNote = ErrorNote.new(serverStr,serverURL,explanation,diagnostics)
 					return false
 				end
 			end

@@ -252,10 +252,10 @@ describe ProbeKit do
 
 	end
 
-	describe "ProbeTestList" do
+	describe "TestList" do
 
 		it "should be able to execute a simple list of tests:" do
-			ptlo = ProbeTestList.new('test1')
+			ptlo = TestList.new('test1')
 			ptlo.setTimeOut(16)
 			ptlo.clearDir
 			ptlo.length.must_equal 0
@@ -310,7 +310,7 @@ describe ProbeKit do
 		end
 
 		it "should be able to execute a complex list of tests:" do
-			ptlo = ProbeTestList.new('test2')
+			ptlo = TestList.new('test2')
 			ptlo.clearDir
 			ptlo.length.must_equal 0
 			ptlo.setTimeOut(16)

@@ -24,7 +24,7 @@ describe ProbeKit do
 	describe "TestBattery bugs that should not recur include:" do
 	end
 
-	describe "ProbeTestList bugs that should not recur include:" do
+	describe "TestList bugs that should not recur include:" do
 	end
 
 end

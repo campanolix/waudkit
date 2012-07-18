@@ -627,22 +627,22 @@ describe ProbeKit do
 
 	end
 
-	describe "ProbeTestList" do
+	describe "TestList" do
 
 		it "must have a new method that is silent:" do
-			lambda { ProbeTestList.new('testlist_id') }.must_be_silent
+			lambda { TestList.new('testlist_id') }.must_be_silent
 		end
 
 		it "must raise argument error if id/node argument left off:" do
-			lambda { ProbeTestList.new }.must_raise(ArgumentError)
+			lambda { TestList.new }.must_raise(ArgumentError)
 		end
 
 		it "must raise argument error if argument bad:" do
-			lambda { ProbeTestList.new("") }.must_raise(ArgumentError)
+			lambda { TestList.new("") }.must_raise(ArgumentError)
 		end
 
 		it "must instantiate to an object with the following defaults:" do
-			ptlo = ProbeTestList.new('thisid')
+			ptlo = TestList.new('thisid')
 			ptlo.BaseDir.must_equal '/tmp'
 			ptlo.DataDir.must_equal '/tmp/thisid'
 			ptlo.length.must_equal 0
@@ -657,11 +657,11 @@ describe ProbeKit do
 		end
 
 		it "object.setTimeOut should be silent:" do
-			lambda { ProbeTestList.new('tid').setTimeOut(5) }.must_be_silent
+			lambda { TestList.new('tid').setTimeOut(5) }.must_be_silent
 		end
 
 		it "object.setTimeOut should allow the following examples:" do
-			ptlo = ProbeTestList.new('tid')
+			ptlo = TestList.new('tid')
 			ptlo.setTimeOut("45")
 			ptlo.setTimeOut("1005")
 			ptlo.setTimeOut(15)
@@ -670,7 +670,7 @@ describe ProbeKit do
 		end
 
 		it "object.setTimeOut should NOT allow the following examples:" do
-			ptlo = ProbeTestList.new('tid')
+			ptlo = TestList.new('tid')
 			lambda { ptlo.setTimeOut(0) }.must_raise(ArgumentError)
 			lambda { ptlo.setTimeOut("") }.must_raise(ArgumentError)
 			lambda { ptlo.setTimeOut(nil) }.must_raise(ArgumentError)
@@ -679,7 +679,7 @@ describe ProbeKit do
 		end
 
 		it "should be able to add tests successfully:" do
-			ptlo = ProbeTestList.new('tid')
+			ptlo = TestList.new('tid')
 			ptlo.length.must_equal 0
 			to1 = TestBattery.new('Tid1')
 			pso1 = ProbeSequence.new('psid1')
@@ -700,11 +700,11 @@ describe ProbeKit do
 		end
 
 		it "object.executeParallel should execute successfully offline when the list of probes is empty:" do
-			lambda { ProbeTestList.new('tid').executeParallel }.must_be_silent
+			lambda { TestList.new('tid').executeParallel }.must_be_silent
 		end
 
 		it "object.executeSerial should execute successfully offline when the list of probes is empty:" do
-			lambda { ProbeTestList.new('tid').executeSerial }.must_be_silent
+			lambda { TestList.new('tid').executeSerial }.must_be_silent
 		end
 
 	end
