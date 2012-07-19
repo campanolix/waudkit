@@ -1,0 +1,15 @@
+All Day,0,0
+Day Shift,7,15
+Swing Shift,15,23
+Graveyard Shift,23,7
+Prime Time,19,21,weekday
+Prime Down Time,23,1
+Laze,12,0,weekend
+Farmerweek,5,19,weekday
+Farmerweekend,7,21,weekend
+Yuppyweek,7,22,weekday
+Yuppyweekend,10,0,weekend
+Zombie,0,6
+Morning,6,12
+Afternoon,12,18
+Evening,18,0

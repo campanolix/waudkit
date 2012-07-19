@@ -1,0 +1,16 @@
+At this Point we are using the following Premier account (RHAPSODY_PREMIER)
+names corresponding to each of the servers probed:
+
+qa_spot-monitor-flash01_rp@rhapsody.lan
+qa_spot-monitor-flash02_rp@rhapsody.lan
+qa_spot-monitor-flash03_rp@rhapsody.lan
+qa_spot-monitor-flash04_rp@rhapsody.lan
+qa_spot-monitor-flash05_rp@rhapsody.lan
+qa_spot-monitor-flash06_rp@rhapsody.lan
+qa_spot-monitor-flash07_rp@rhapsody.lan
+qa_spot-monitor-flash08_rp@rhapsody.lan
+
+Password for all of these will then be:  spotflashqa
+Any new servers will need an account that follows this pattern, and the premier
+account names should be listed above AND this listing should exist both on the
+installed server configuration area AND IN SUBVERSION.

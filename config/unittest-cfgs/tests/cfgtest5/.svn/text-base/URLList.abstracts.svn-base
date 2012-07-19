@@ -1,0 +1,10 @@
+http://rhap-flash-prod-1201.sea2.rhapsody.com:8080/remedy-web/getContent.xml?token=@@@TestUserToken@@@&br=format_1&channel=false&trackId=Tra.38625418&includeTrackInfo=true&ocode=rn&pcode=rn&nimdax=true&mid=123 
+http://rhap-flash-prod-1202.sea2.rhapsody.com:8080/remedy-web/getContent.xml?token=@@@TestUserToken@@@&br=format_1&channel=false&trackId=Tra.38625418&includeTrackInfo=true&ocode=rn&pcode=rn&nimdax=true&mid=123 
+http://rhap-flash-prod-1203.sea2.rhapsody.com:8080/remedy-web/getContent.xml?token=@@@TestUserToken@@@&br=format_1&channel=false&trackId=Tra.38625418&includeTrackInfo=true&ocode=rn&pcode=rn&nimdax=true&mid=123 
+http://rhap-flash-prod-1204.sea2.rhapsody.com:8080/remedy-web/getContent.xml?token=@@@TestUserToken@@@&br=format_1&channel=false&trackId=Tra.38625418&includeTrackInfo=true&ocode=rn&pcode=rn&nimdax=true&mid=123 
+http://rhap-flash-prod-1205.sea2.rhapsody.com:8080/remedy-web/getContent.xml?token=@@@TestUserToken@@@&br=format_1&channel=false&trackId=Tra.38625418&includeTrackInfo=true&ocode=rn&pcode=rn&nimdax=true&mid=123 
+http://rhap-flash-prod-1206.sea2.rhapsody.com:8080/remedy-web/getContent.xml?token=@@@TestUserToken@@@&br=format_1&channel=false&trackId=Tra.38625418&includeTrackInfo=true&ocode=rn&pcode=rn&nimdax=true&mid=123 
+http://rhap-flash-prod-1207.sea2.rhapsody.com:8080/remedy-web/getContent.xml?token=@@@TestUserToken@@@&br=format_1&channel=false&trackId=Tra.38625418&includeTrackInfo=true&ocode=rn&pcode=rn&nimdax=true&mid=123 
+http://rhap-flash-prod-1208.sea2.rhapsody.com:8080/remedy-web/getContent.xml?token=@@@TestUserToken@@@&br=format_1&channel=false&trackId=Tra.38625418&includeTrackInfo=true&ocode=rn&pcode=rn&nimdax=true&mid=123 
+http://playback-beta1.rhapsody.com/getContent.xml?token=@@@TestUserToken@@@&br=format_1&channel=false&trackId=Tra.38625418&includeTrackInfo=true&ocode=rn&pcode=rn&nimdax=true&mid=123 
+http://playback-beta2.rhapsody.com/getContent.xml?token=@@@TestUserToken@@@&br=format_1&channel=false&trackId=Tra.38625418&includeTrackInfo=true&ocode=rn&pcode=rn&nimdax=true&mid=123 

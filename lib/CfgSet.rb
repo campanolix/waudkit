@@ -186,7 +186,7 @@ Note:  For the purposes of configurations, we have the following hierarchy:
 #	The first few are base classes.
 #
 
-class SpotFlatCfg
+class BaseFlatCfg
 
 	attr_accessor :Value
 	attr_reader :CfgSpec, :Label
@@ -262,103 +262,46 @@ class SpotFlatCfg
 
 end
 
-class SpotSingleLineTextCfg < SpotFlatCfg
+class BaseListOfFiles
+
+	attr_accessor :Value
+	attr_reader :CfgDir, :CfgSuffix, :Label
 
 	protected
 
-	def validateSingleLineText
-		unless @LoadString and @LoadString.class == String and @LoadString.length > 0
-			raise ArgumentError, "Missing or Invalid LoadString in Single Line Text Cfg Object #{@CfgSpec}."
-		end
-		ll = @LoadString.split("\n").length
-		if ll > 1 then 
-			raise ArgumentError,
-"Multi-line string invalid for #{@CfgSpec} #{self.class} configuration."
-		elsif ll < 1 then 
-			raise ArgumentError,
-"Some Invalid string state (#{@LoadString}) for #{@CfgSpec} #{self.class} configuration."
-		end
-	end
-
-	def parseCfg
-		super
-		validateSingleLineText unless @EmptyOkay and not cfgExists?
-	end
-
-end
-
-class SpotBooleanCfg < SpotSingleLineTextCfg
-
-	protected
-
-	def assignValueIfValid
-		# Nothing done here, as assignments re in parseCfg
-	end
-
-	def parseCfg
-		# Empty is always a valid false option with this kind of configuration.  If the configuration file
-		# is omitted, the value is false.  Therefore @EmptyOkay is always true.
-		@EmptyOkay = true
-		if File.exists?(@CfgSpec)
-			@LoadString = FlatTools.getFile(@CfgSpec).strip
-			validateSingleLineText
-			if @LoadString.upcase =~ /TRUE/ then
-				@Value = true
-			elsif @LoadString.upcase =~ /FALSE/ then
-				@Value = false
-			else
-				raise ArgumentError, "Invalid #{@Label} in #{@CfgSpec}.  Must be TRUE or FALSE.  Was #{@LoadString}."
+	def parseAndValidate
+		validateMiscellany
+		Dir["#{@CfgDir}/??.#{@CfgSuffix}"].each do |fspec|
+			loadstring = FlatTools.getFile(fspec).strip
+			unless loadstring and loadstring.class == String
+				raise LoadError, "Invalid @LoadString #{loadstring}."
 			end
-		else
-			@Value = false
-		end
-	end
-
-end
-
-class SpotSpecOnlyCfg < SpotFlatCfg
-
-	protected
-
-	def parseCfg
-		# Empty is always a valid option for SpecOnly, since missing files indicate the function is just not in use.
-		@EmptyOkay = true
-		if File.exists?(@CfgSpec) then
-			@LoadString = "Data NOT loaded at instantiation.  Access by @CfgSpec."
-		else
-			@LoadString = nil
-		end
-	end
-
-end
-
-class SpotWholeNoCfg < SpotSingleLineTextCfg
-
-	attr_reader :Maximum, :Minimum
-
-	protected
-
-	def assignValueIfValid
-		unless @LoadString =~ /^\d+$/
-			raise ArgumentError,
-"Invalid #{@Label} in #{@CfgSpec}.  Must be a positive integer."
-		end
-		@Value = @LoadString.to_i
-		unless @Minimum <= @Value and @Value <= @Maximum
-			raise ArgumentError,
-"Invalid #{@Label}(#{self.class}) value #{@Value} out of range {#{@Minimum},#{@Maximum}}."
 		end
 	end
 
 	def validateMiscellany
-		super
-		validateFixnum(@Minimum,'validateMiscellany')
-		validateFixnum(@Maximum,'validateMiscellany')
+		unless @CfgDir and @CfgDir.class == String and @CfgDir.length >= 1 && @CfgDir =~ /^\S+/
+			raise LoadError, "Invalid @CfgSpec #{@CfgSpec}."
+		end
+		unless @CfgSuffix and @CfgSuffix.class == String and @CfgSuffix.length >= 2 && @CfgSuffix =~ /^\S+/
+			raise LoadError, "Invalid @CfgName #{@CfgSuffix}."
+		end
+		unless @Label and @Label.class == String
+			raise LoadError, "Invalid @Label #{@Label}."
+		end
+	end
+
+	public
+
+	def initialize(cfgDir)
+		@CfgDir = validateAndStripAbsSpec(cfgDir,'SpotFlatCfg instantiator')
+		@CfgSpec = "addr"
+		parseAndValidate
 	end
 
 end
 
-class SpotFlatListCfg < SpotFlatCfg
+class L2Abstract_FlatListCfg < BaseFlatCfg
 
 	attr_reader :MaxLines, :MinLines
 
@@ -421,7 +364,77 @@ class SpotFlatListCfg < SpotFlatCfg
 
 end
 
-class SpotEmailList < SpotFlatListCfg
+class L2Abstract_SingleLineTextCfg < BaseFlatCfg
+
+	protected
+
+	def validateSingleLineText
+		unless @LoadString and @LoadString.class == String and @LoadString.length > 0
+			raise ArgumentError, "Missing or Invalid LoadString in Single Line Text Cfg Object #{@CfgSpec}."
+		end
+		ll = @LoadString.split("\n").length
+		if ll > 1 then 
+			raise ArgumentError,
+"Multi-line string invalid for #{@CfgSpec} #{self.class} configuration."
+		elsif ll < 1 then 
+			raise ArgumentError,
+"Some Invalid string state (#{@LoadString}) for #{@CfgSpec} #{self.class} configuration."
+		end
+	end
+
+	def parseCfg
+		super
+		validateSingleLineText unless @EmptyOkay and not cfgExists?
+	end
+
+end
+
+class L2AbstractSpecOnlyCfg < BaseFlatCfg
+
+	protected
+
+	def parseCfg
+		# Empty is always a valid option for SpecOnly, since missing files indicate the function is just not in use.
+		@EmptyOkay = true
+		if File.exists?(@CfgSpec) then
+			@LoadString = "Data NOT loaded at instantiation.  Access by @CfgSpec."
+		else
+			@LoadString = nil
+		end
+	end
+
+end
+
+class L3AbstractBooleanCfg < L2AbstractSingleLineTextCfg
+
+	protected
+
+	def assignValueIfValid
+		# Nothing done here, as assignments re in parseCfg
+	end
+
+	def parseCfg
+		# Empty is always a valid false option with this kind of configuration.  If the configuration file
+		# is omitted, the value is false.  Therefore @EmptyOkay is always true.
+		@EmptyOkay = true
+		if File.exists?(@CfgSpec)
+			@LoadString = FlatTools.getFile(@CfgSpec).strip
+			validateSingleLineText
+			if @LoadString.upcase =~ /TRUE/ then
+				@Value = true
+			elsif @LoadString.upcase =~ /FALSE/ then
+				@Value = false
+			else
+				raise ArgumentError, "Invalid #{@Label} in #{@CfgSpec}.  Must be TRUE or FALSE.  Was #{@LoadString}."
+			end
+		else
+			@Value = false
+		end
+	end
+
+end
+
+class L3AbstractEmailList < L2AbstractFlatListCfg
 
 	def SpotEmailList.validate(elO)
 		# Easiest way to do this now, but there may be a better way:
@@ -446,11 +459,14 @@ class SpotEmailList < SpotFlatListCfg
 
 end
 
-class TestList < SpotFlatListCfg
+class L3AbstractTestList < L2AbstractFlatListCfg
+
+	# Broken from legacy references
 
 	protected
 
 	def validateLine(lStr)
+		#Below is broken, as SpotService does not exist now:
 		SpotService.validateServiceId(lStr,'TestList validateLine(lStr)')
 		dspec = "#{@ServicesCfgDir}/#{lStr}"
 		unless File.exists?(dspec)
@@ -473,12 +489,38 @@ class TestList < SpotFlatListCfg
 
 end
 
+class L3AbstractWholeNoCfg < L2AbstractSingleLineTextCfg
+
+	attr_reader :Maximum, :Minimum
+
+	protected
+
+	def assignValueIfValid
+		unless @LoadString =~ /^\d+$/
+			raise ArgumentError,
+"Invalid #{@Label} in #{@CfgSpec}.  Must be a positive integer."
+		end
+		@Value = @LoadString.to_i
+		unless @Minimum <= @Value and @Value <= @Maximum
+			raise ArgumentError,
+"Invalid #{@Label}(#{self.class}) value #{@Value} out of range {#{@Minimum},#{@Maximum}}."
+		end
+	end
+
+	def validateMiscellany
+		super
+		validateFixnum(@Minimum,'validateMiscellany')
+		validateFixnum(@Maximum,'validateMiscellany')
+	end
+
+end
+
 #2345678901234567890123456789012345678901234567890123456789012345678901234567890
 #
 #	Concrete Configuration Classes.
 #
 
-class AdminEmailList < SpotEmailList
+class AdminEmailList < L3AbstractEmailList
 
 	public
 
@@ -492,7 +534,7 @@ class AdminEmailList < SpotEmailList
 
 end
 
-class AddressList < SpotFlatListCfg
+class AddressList < SpotListOfFiles
 
 	protected
 
