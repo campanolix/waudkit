@@ -186,7 +186,7 @@ Note:  For the purposes of configurations, we have the following hierarchy:
 #	The first few are base classes.
 #
 
-class BaseFlatCfg
+class Base_FlatCfg
 
 	attr_accessor :Value
 	attr_reader :CfgSpec, :Label
@@ -262,46 +262,7 @@ class BaseFlatCfg
 
 end
 
-class BaseListOfFiles
-
-	attr_accessor :Value
-	attr_reader :CfgDir, :CfgSuffix, :Label
-
-	protected
-
-	def parseAndValidate
-		validateMiscellany
-		Dir["#{@CfgDir}/??.#{@CfgSuffix}"].each do |fspec|
-			loadstring = FlatTools.getFile(fspec).strip
-			unless loadstring and loadstring.class == String
-				raise LoadError, "Invalid @LoadString #{loadstring}."
-			end
-		end
-	end
-
-	def validateMiscellany
-		unless @CfgDir and @CfgDir.class == String and @CfgDir.length >= 1 && @CfgDir =~ /^\S+/
-			raise LoadError, "Invalid @CfgSpec #{@CfgSpec}."
-		end
-		unless @CfgSuffix and @CfgSuffix.class == String and @CfgSuffix.length >= 2 && @CfgSuffix =~ /^\S+/
-			raise LoadError, "Invalid @CfgName #{@CfgSuffix}."
-		end
-		unless @Label and @Label.class == String
-			raise LoadError, "Invalid @Label #{@Label}."
-		end
-	end
-
-	public
-
-	def initialize(cfgDir)
-		@CfgDir = validateAndStripAbsSpec(cfgDir,'SpotFlatCfg instantiator')
-		@CfgSpec = "addr"
-		parseAndValidate
-	end
-
-end
-
-class L2Abstract_FlatListCfg < BaseFlatCfg
+class L2Abstract_FlatListCfg < Base_FlatCfg
 
 	attr_reader :MaxLines, :MinLines
 
@@ -364,7 +325,7 @@ class L2Abstract_FlatListCfg < BaseFlatCfg
 
 end
 
-class L2Abstract_SingleLineTextCfg < BaseFlatCfg
+class L2Abstract_SingleLineTextCfg < Base_FlatCfg
 
 	protected
 
@@ -389,7 +350,7 @@ class L2Abstract_SingleLineTextCfg < BaseFlatCfg
 
 end
 
-class L2AbstractSpecOnlyCfg < BaseFlatCfg
+class L2Abstract_SpecOnlyCfg < BaseFlatCfg
 
 	protected
 
@@ -405,7 +366,7 @@ class L2AbstractSpecOnlyCfg < BaseFlatCfg
 
 end
 
-class L3AbstractBooleanCfg < L2AbstractSingleLineTextCfg
+class L3Abstract_BooleanCfg < L2Abstract_SingleLineTextCfg
 
 	protected
 
@@ -434,7 +395,7 @@ class L3AbstractBooleanCfg < L2AbstractSingleLineTextCfg
 
 end
 
-class L3AbstractEmailList < L2AbstractFlatListCfg
+class L3Abstract_EmailList < L2Abstract_FlatListCfg
 
 	def SpotEmailList.validate(elO)
 		# Easiest way to do this now, but there may be a better way:
@@ -459,7 +420,7 @@ class L3AbstractEmailList < L2AbstractFlatListCfg
 
 end
 
-class L3AbstractTestList < L2AbstractFlatListCfg
+class L3Abstract_TestList < L2Abstract_FlatListCfg
 
 	# Broken from legacy references
 
@@ -489,7 +450,7 @@ class L3AbstractTestList < L2AbstractFlatListCfg
 
 end
 
-class L3AbstractWholeNoCfg < L2AbstractSingleLineTextCfg
+class L3Abstract_WholeNoCfg < L2Abstract_SingleLineTextCfg
 
 	attr_reader :Maximum, :Minimum
 
@@ -520,7 +481,7 @@ end
 #	Concrete Configuration Classes.
 #
 
-class AdminEmailList < L3AbstractEmailList
+class AdminEmailList < L3Abstract_EmailList
 
 	public
 
@@ -534,51 +495,7 @@ class AdminEmailList < L3AbstractEmailList
 
 end
 
-class AddressList < SpotListOfFiles
-
-	protected
-
-	def validateLine(lStr)
-		validateAndStripURL(lStr,"instantiator for #{@Label}")
-	end
-
-	public
-
-	def initialize(cfgDir)
-		@EmptyOkay = false
-		@Label = 'Service URL List'
-		@MinLines = 1
-		@MaxLines = 100
-		super(cfgDir)
-	end
-
-	def dumpAsHTML
-		markup = ""
-		@Value.each do |line|
-			markup += "<nobr>" + CGI.escapeHTML(line) + "</nobr><br />\n"
-		end
-		return markup
-	end
-
-	def getURLByServerSpec(sSpec)
-		@Value.each do |lurl|
-			lsurl = validateAndStripURL(lurl,"instantiator for #{@Label}")
-			sspec = Regexp.escape(sSpec)
-			return lsurl if lsurl =~ /#{sspec}/
-		end
-		return nil
-	end
-
-	def hasURL?(urlStr)
-		@Value.each do |lurl|
-			return true if lurl == urlStr
-		end
-		return false
-	end
-
-end
-
-class AllDataExpirationMinutes < SpotWholeNoCfg
+class AllDataExpirationMinutes < L3Abstract_WholeNoCfg
 
 	public
 
@@ -592,7 +509,7 @@ class AllDataExpirationMinutes < SpotWholeNoCfg
 
 end
 
-class AppTrace < SpotBooleanCfg
+class AppTrace < L3Abstract_BooleanCfg
 
 	public
 
@@ -604,7 +521,7 @@ class AppTrace < SpotBooleanCfg
 end
 
 
-class BinaryPOSTData < SpotSpecOnlyCfg
+class BinaryPOSTData < L2Abstract_SpecOnlyCfg
 
 	public
 
@@ -626,7 +543,7 @@ class BinaryPOSTData < SpotSpecOnlyCfg
 
 end
 
-class BottomColumns < SpotWholeNoCfg
+class BottomColumns < L3Abstract_WholeNoCfg
 
 	public
 
@@ -640,7 +557,7 @@ class BottomColumns < SpotWholeNoCfg
 
 end
 
-class BottomHelp < SpotFlatListCfg
+class BottomHelp < L2Abstract_FlatListCfg
 
 	public
 
@@ -653,7 +570,7 @@ class BottomHelp < SpotFlatListCfg
 
 end
 
-class BottomTests < TestList
+class BottomTests < L3Abstract_TestList
 
 	public
 
@@ -666,7 +583,7 @@ class BottomTests < TestList
 
 end
 
-class Cookies < SpotBooleanCfg
+class Cookies < L3Abstract_BooleanCfg
 
 	def initialize(cfgDir)
 		@Label = 'Cookies Collected and Referenced (boolean)'
@@ -675,7 +592,7 @@ class Cookies < SpotBooleanCfg
 
 end
 
-class CronProbePeriod < SpotWholeNoCfg
+class CronProbePeriod < L3Abstract_WholeNoCfg
 
 	# Must establish that 1 works, or 61, for that matter.  120, for instance, would be nice.
 	public
@@ -690,7 +607,7 @@ class CronProbePeriod < SpotWholeNoCfg
 
 end
 
-class CurlHTTPHeaders < SpotSingleLineTextCfg
+class CurlHTTPHeaders < L2Abstract_SingleLineTextCfg
 
 	protected
 
@@ -724,7 +641,7 @@ class CurlHTTPHeaders < SpotSingleLineTextCfg
 
 end
 
-class DailyEmailList < SpotEmailList
+class DailyEmailList < L3Abstract_EmailList
 
 	public
 
@@ -738,7 +655,7 @@ class DailyEmailList < SpotEmailList
 
 end
 
-class DataCollectionTests < TestList
+class DataCollectionTests < L3Abstract_TestList
 
 	public
 
@@ -751,8 +668,17 @@ class DataCollectionTests < TestList
 
 end
 
+class EmailURL < L2Abstract_SingleLineTextCfg
 
-class FailureRange < SpotWholeNoCfg
+	def initialize(cfgDir)
+		@EmptyOkay = false
+		@Label = 'Hostname or DNS Name Representing an IP Address'
+		super(cfgDir)
+	end
+
+end
+
+class FailureRange < L3Abstract_WholeNoCfg
 
 	public
 
@@ -766,7 +692,7 @@ class FailureRange < SpotWholeNoCfg
 
 end
 
-class FailureRangeStartOffset < SpotWholeNoCfg
+class FailureRangeStartOffset < L3Abstract_WholeNoCfg
 
 	public
 
@@ -780,7 +706,37 @@ class FailureRangeStartOffset < SpotWholeNoCfg
 
 end
 
-class IgnoreStdout < SpotBooleanCfg
+class HostName < L2Abstract_SingleLineTextCfg
+
+	def initialize(cfgDir)
+		@EmptyOkay = false
+		@Label = 'Hostname or DNS Name Representing an IP Address'
+		super(cfgDir)
+	end
+
+end
+
+class HTTPFullURL < L2Abstract_SingleLineTextCfg
+
+	def initialize(cfgDir)
+		@EmptyOkay = false
+		@Label = 'HTTP Full URL'
+		super(cfgDir)
+	end
+
+end
+
+class HTTPPathURI < L2Abstract_SingleLineTextCfg
+
+	def initialize(cfgDir)
+		@EmptyOkay = false
+		@Label = 'HTTP Path URI'
+		super(cfgDir)
+	end
+
+end
+
+class IgnoreStdout < L3Abstract_BooleanCfg
 
 	def initialize(cfgDir)
 		@Label = 'Ignore Stdout Data from Probe'
@@ -789,7 +745,7 @@ class IgnoreStdout < SpotBooleanCfg
 
 end
 
-class Label < SpotSingleLineTextCfg
+class Label < L2Abstract_SingleLineTextCfg
 	
 	protected
 
@@ -810,7 +766,7 @@ class Label < SpotSingleLineTextCfg
 
 end
 
-class MinSitings4Failure < SpotWholeNoCfg
+class MinSitings4Failure < L3Abstract_WholeNoCfg
 
 	public
 
@@ -824,7 +780,7 @@ class MinSitings4Failure < SpotWholeNoCfg
 
 end
 
-class MonthlyEmailList < SpotEmailList
+class MonthlyEmailList < L3Abstract_EmailList
 
 	public
 
@@ -838,7 +794,7 @@ class MonthlyEmailList < SpotEmailList
 
 end
 
-class NotificationList < SpotEmailList
+class NotificationList < L3Abstract_EmailList
 	# A feature to notify periodically and expire notifications is worth consideration.
 
 	public
@@ -853,7 +809,7 @@ class NotificationList < SpotEmailList
 
 end
 
-class POSTData < SpotSpecOnlyCfg
+class POSTData < L2Abstract_SpecOnlyCfg
 
 	public
 
@@ -881,7 +837,7 @@ class POSTData < SpotSpecOnlyCfg
 
 end
 
-class RefreshSeconds < SpotWholeNoCfg
+class RefreshSeconds < L3Abstract_WholeNoCfg
 
 	public
 
@@ -895,7 +851,7 @@ class RefreshSeconds < SpotWholeNoCfg
 
 end
 
-class ReNotificationPeriod < SpotWholeNoCfg
+class ReNotificationPeriod < L3Abstract_WholeNoCfg
 
 	public
 
@@ -909,7 +865,7 @@ class ReNotificationPeriod < SpotWholeNoCfg
 
 end
 
-class ReNotificationStartMinute < SpotWholeNoCfg
+class ReNotificationStartMinute < L3Abstract_WholeNoCfg
 
 	public
 
@@ -923,7 +879,7 @@ class ReNotificationStartMinute < SpotWholeNoCfg
 
 end
 
-class StowProbeTimestamps < SpotBooleanCfg
+class StowProbeTimestamps < L3Abstract_BooleanCfg
 
 	public
 
@@ -935,7 +891,7 @@ class StowProbeTimestamps < SpotBooleanCfg
 
 end
 
-class TestAppTimeout < SpotWholeNoCfg
+class TestAppTimeout < L3Abstract_WholeNoCfg
 
 	public
 
@@ -949,7 +905,7 @@ class TestAppTimeout < SpotWholeNoCfg
 
 end
 
-class TimeoutOverAppMax < SpotWholeNoCfg
+class TimeoutOverAppMax < L3Abstract_WholeNoCfg
 
 	public
 
@@ -963,7 +919,7 @@ class TimeoutOverAppMax < SpotWholeNoCfg
 
 end
 
-class TopHelp < SpotFlatListCfg
+class TopHelp < L2Abstract_FlatListCfg
 
 	public
 
@@ -977,7 +933,7 @@ class TopHelp < SpotFlatListCfg
 
 end
 
-class TopTests < TestList
+class TopTests < L3Abstract_TestList
 
 	public
 
@@ -991,7 +947,7 @@ class TopTests < TestList
 
 end
 
-class TrackedProblemExpiration < SpotWholeNoCfg
+class TrackedProblemExpiration < L3Abstract_WholeNoCfg
 
 	# This is for the amount of time past the present that a
 	# tracked problem stays yellow.  After this period, a
@@ -1010,7 +966,7 @@ class TrackedProblemExpiration < SpotWholeNoCfg
 
 end
 
-class Validations < SpotFlatCfg
+class Validations < L2Abstract_FlatCfg
 
 	attr_reader :ErrorNote
 
@@ -1133,6 +1089,9 @@ class Validations < SpotFlatCfg
 	end
 
 	def hasServerFailure?(sprO)
+		# This method has to separate out the data object as much as possible from the probe object.
+		# I need to strive for a configuration oriented project that allies with, but is not strongly tied to 
+		# the probe.
 		ServerProbeRecord.validateObject(sprO,'hasServerFailure?(sprO)')
 
 		unless sprO.StderrContent.length > 0 
@@ -1235,7 +1194,7 @@ class Validations < SpotFlatCfg
 
 end
 
-class WeeklyEmailList < SpotEmailList
+class WeeklyEmailList < L3Abstract_EmailList
 
 	public
 
