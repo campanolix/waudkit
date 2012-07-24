@@ -1247,28 +1247,60 @@ end
 
 #        01234567890123456789012345678901234567890123456789012345678901234567890
 
-class Probe < DirectoryBase
+class ProbeBattery < DirectoryBase
 	# Base cfg class for a single probe step.
+
+	class ProbeAddress
+
+		def initialize(cfgDir)
+			@CfgDir = cfgDir
+			Dir["#{@CfgDir}/??"].each do |addrnostr|
+				unless addrnostr =~ /^\d{2}$/
+					raise ArgumentError, "Invalid Address No String format (should be ddd):  |#{addrnostr}|"
+				end
+			end
+		end
+
+	end
 
 	attr_accessor :AddressList, :BinaryPOSTData, :CurlHTTPHeaders, :POSTData,
 			:TestAppTimeout, :Validations
 
-	def initialize(cfgNode,baseDir)
+	def initialize(addrNode,baseDir)
 		super(cfgNode,baseDir)
 
-		@AddressList		= AddressList.new(@CfgDir)
+
 		@BinaryPOSTData		= BinaryPOSTData.new(@CfgDir)
 		@CurlHTTPHeaders	= CurlHTTPHeaders.new(@CfgDir)
 		@POSTData			= POSTData.new(@CfgDir)
 		@TestAppTimeout		= TestAppTimeout.new(@CfgDir)
 		@Validations		= Validations.new(@CfgDir)
+
+		@AddressHash		= Hash.new # Because this yields a simple way to compare element name unqieness between ProbeSets
+		# 3 character id required:  
+		#				ddd
+		Dir["#{@CfgDir}/step.?.*"].each do |spec|
+			addrnostr = spec.sub(/#{@CfgDir}\//,'')
+			unless addrnostr =~ /^step\.\d\.(.*)$/
+				raise ArgumentError, "Invalid Address No String format (should be ddd):  |#{addrnostr}|"
+			end
+			addrtype = $1
+			case addrtype
+			when 'url'
+				@Address = WaudURL.new(addrtype,@CfgDir)
+			when 'hostname'
+				@Address = WaudHostName.new(addrtype,@CfgDir)
+			else
+				raise ArgumentError, "Invalid address type extension '#{addrtype}'"
+			end
+		end
 	end
 
 end # of Probe class
 
 #        01234567890123456789012345678901234567890123456789012345678901234567890
 
-class AdHocBattery < DirectoryBase
+class AdHocTest < DirectoryBase
 	# Base cfg class for a test battery set.  This class includes all
 	# 	needed for any arbitrary probe set, but does not include enough
 	#	for ongoing monitoring.
@@ -1294,7 +1326,7 @@ end # of AdHocBattery class
 
 #        01234567890123456789012345678901234567890123456789012345678901234567890
 
-class Battery < AdHocBattery
+class Test < AdHocTest
 	# Includes all the data needed for data collection in an ongoing
 	# monitoring activity.
 
@@ -1323,7 +1355,7 @@ end # of Battery class
 
 #        01234567890123456789012345678901234567890123456789012345678901234567890
 
-class AdminBattery < Battery
+class AdminTest < Test
 	# Includes all the data needed for reporting and probe configuration
 	# maintenance.
 
@@ -1350,7 +1382,7 @@ end # of AdminBattery class
 
 #        01234567890123456789012345678901234567890123456789012345678901234567890
 
-class AdhocTests < DirectoryBase
+class AdhocTestSet < DirectoryBase
 
 	attr_accessor :AllProbesTimeout, :ProbeDefaultTimeout, :UserData
 
@@ -1373,11 +1405,11 @@ class AdhocTests < DirectoryBase
 		loadTests
 	end
 
-end # of AdhocTests
+end # of AdhocTestSet
 
 #        01234567890123456789012345678901234567890123456789012345678901234567890
 
-class Tests < AdhocTests
+class MonitorTestSet < AdhocTestSet
 
 	# Cfg organized version of ProbeKit::TestList
 
@@ -1401,7 +1433,7 @@ class Tests < AdhocTests
 
 end # of Tests class
 
-class AdminTests < Tests
+class AdminTestSet < MonitorTestSet
 
 	def loadTests
 		@DataCollectionTests.each_test do |tname|
