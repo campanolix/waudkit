@@ -180,6 +180,79 @@ Note:  For the purposes of configurations, we have the following hierarchy:
 		return nostr
 	end
 
+
+#2345678901234567890123456789012345678901234567890123456789012345678901234567890
+#
+#	Stand alone configuration classes (for little pieces)
+#
+
+class AddressBase
+
+	attr_reader :AddrStr, :AddrO
+	
+	# Add method for default interpolation assignment in strings of @AddrStr.
+
+	def initialize(addrStr)
+		unless addrStr
+			raise ArgumentError, "nil Address String Invalid."
+		end
+		addrStr.strip!
+		if addrStr.length < 2 then
+			raise ArgumentError, "Address String '#{addrStr}' Too Short."
+		end
+		@AddrO = addrStr
+		@AddrStr = addrStr
+	end
+
+end
+
+class HostName < AddressBase
+
+	def initialize(addrStr)
+		super(addrStr)
+		unless @AddrStr =~ /^\w{2,32}$/
+			raise ArgumentError, "Hostname String '#{@AddrStr}' has invalid characters."
+		end
+	end
+
+end
+
+class HexAddress < AddressBase
+
+	def initialize(addrStr)
+		super(addrStr)
+		unless @AddrStr =~ /^\x{1,32}$/
+			raise ArgumentError, "Hex Address String '#{addrStr}' has invalid characters."
+		end
+		# Add assignment of integer to @AddrO
+	end
+
+end
+
+class IPAddress < AddressBase
+
+	def initialize(addrStr)
+		super(addrStr)
+		unless @AddrStr =~ /^[12]?\o{1,2}\.[12]?\o{1,2}\.[12]?\o{1,2}\.[12]?\o{1,2}$/
+			raise ArgumentError, "IP Address '#{@AddrStr}' has invalid format."
+		end
+		# Add assignment of integer to @AddrO
+	end
+
+end
+
+class URL < AddressBase
+
+	def initialize(addrStr)
+		super(addrStr)
+		unless @AddrStr =~ /^http/
+			raise ArgumentError, "URL does not begin with http prefix string."
+		end
+		@AddrO = URI.new(addrStr)
+	end
+
+end
+
 #2345678901234567890123456789012345678901234567890123456789012345678901234567890
 #
 #	Configuration Classes for loading, validating, and conveying flat file data.
@@ -706,36 +779,6 @@ class FailureRangeStartOffset < L3Abstract_WholeNoCfg
 
 end
 
-class HostName < L2Abstract_SingleLineTextCfg
-
-	def initialize(cfgDir)
-		@EmptyOkay = false
-		@Label = 'Hostname or DNS Name Representing an IP Address'
-		super(cfgDir)
-	end
-
-end
-
-class HTTPFullURL < L2Abstract_SingleLineTextCfg
-
-	def initialize(cfgDir)
-		@EmptyOkay = false
-		@Label = 'HTTP Full URL'
-		super(cfgDir)
-	end
-
-end
-
-class HTTPPathURI < L2Abstract_SingleLineTextCfg
-
-	def initialize(cfgDir)
-		@EmptyOkay = false
-		@Label = 'HTTP Path URI'
-		super(cfgDir)
-	end
-
-end
-
 class IgnoreStdout < L3Abstract_BooleanCfg
 
 	def initialize(cfgDir)
@@ -1250,15 +1293,42 @@ end
 class ProbeBattery < DirectoryBase
 	# Base cfg class for a single probe step.
 
-	class ProbeAddress
+	class ProbeAddress < DirectoryBase
 
-		def initialize(cfgDir)
+		attr_accessor :AddrHash
+
+		def initialize(cfgDir,addrType,addrHash)
 			@CfgDir = cfgDir
-			Dir["#{@CfgDir}/??"].each do |addrnostr|
+			@AddrHash = Hash.new
+			Dir["#{@CfgDir}/??"].each do |addrnospec|
+				addrnostr = addrnospec.sub("#{@CfgDir}/",'')
 				unless addrnostr =~ /^\d{2}$/
 					raise ArgumentError, "Invalid Address No String format (should be ddd):  |#{addrnostr}|"
 				end
+				addrstr = File.read(addrnospec)
+				case addrType
+				when 'hostname'
+					@AddrHash[addrnostr]	= WaudHostName.new(addrstr)
+				when 'ipaddress'
+					@AddrHash[addrnostr]	= WaudIPAddress.new(addrstr)
+				when 'url'
+					@AddrHash[addrnostr]	= WaudURL.new(addrstr)
+				else
+					raise ArgumentError, "Invalid address type extension '#{addrtype}'"
+				end
 			end
+		end
+
+		def each_addr(sortDescending=false)
+			aha = @AddrHash.keys.sort       unless sortDescending
+            aha = @AddrHash.keys.sort.reverse   if sortDescending
+            aha.each do |ak|
+                yield(@AddrHash[ak])
+            end
+		end
+
+		def getAddr(addrnostr)
+			return @AddrHash[addrnostr]
 		end
 
 	end
@@ -1269,7 +1339,6 @@ class ProbeBattery < DirectoryBase
 	def initialize(addrNode,baseDir)
 		super(cfgNode,baseDir)
 
-
 		@BinaryPOSTData		= BinaryPOSTData.new(@CfgDir)
 		@CurlHTTPHeaders	= CurlHTTPHeaders.new(@CfgDir)
 		@POSTData			= POSTData.new(@CfgDir)
@@ -1279,20 +1348,14 @@ class ProbeBattery < DirectoryBase
 		@AddressHash		= Hash.new # Because this yields a simple way to compare element name unqieness between ProbeSets
 		# 3 character id required:  
 		#				ddd
-		Dir["#{@CfgDir}/step.?.*"].each do |spec|
+		Dir["#{@CfgDir}/step.?.*"].sort.each do |spec|
 			addrnostr = spec.sub(/#{@CfgDir}\//,'')
-			unless addrnostr =~ /^step\.\d\.(.*)$/
-				raise ArgumentError, "Invalid Address No String format (should be ddd):  |#{addrnostr}|"
+			unless addrnostr =~ /^step\.(\d)\.(.*)$/
+				raise ArgumentError, "Invalid Address No String format (should be step.probeno.addrtype):  |#{addrnostr}|"
 			end
-			addrtype = $1
-			case addrtype
-			when 'url'
-				@Address = WaudURL.new(addrtype,@CfgDir)
-			when 'hostname'
-				@Address = WaudHostName.new(addrtype,@CfgDir)
-			else
-				raise ArgumentError, "Invalid address type extension '#{addrtype}'"
-			end
+			probeno = $1
+			addrtype = $2
+			@StepHash[probeno] = ProbeAddress.new(spec,addrtype)
 		end
 	end
 
@@ -1429,6 +1492,7 @@ class MonitorTestSet < AdhocTestSet
 		@TrackedProblemExpiration	= TrackedProblemExpiration.new(@CfgDir)
 
 		super(cfgNode,baseDir)
+
 	end
 
 end # of Tests class
